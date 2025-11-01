@@ -12,14 +12,12 @@ namespace Repositories;
 
 public class EmpresaRepository(IConfiguration configuration) : GenericRepository<Empresa>(configuration)
 {
-    public override int Adicionar(Empresa empresa)
+    public Empresa ObterEmpresaPorIdUsuario(int idUsuario)
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = @"INSERT INTO Empresa (IdUsuario, Nome, Email, Cnpj, Cep, Numero)
-                                    OUTPUT INSERTED.Id
-                                    VALUES (@IdUsuario, @Nome, @Email, @Cnpj, @Cep, @Numero)";
+        const string sqlCommand = "SELECT * FROM Empresa WHERE IdUsuario = @idUsuario";
 
-        return conexao.ExecuteScalar<int>(sqlCommand, empresa);
+        return conexao.QuerySingle<Empresa>(sqlCommand, new { idUsuario });
     }
 }

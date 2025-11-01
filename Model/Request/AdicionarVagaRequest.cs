@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Utils;
 
-namespace Model;
+namespace Model.Request;
 
-public class Vaga
+public class AdicionarVagaRequest
 {
-
-    [IgnoreInsert]
-    public int Id { get; set; }
-    public int IdEmpresa { get; set; }
     public string Nome { get; set; } = string.Empty;
     public string Cargo { get; set; } = string.Empty;
     public string Modelo { get; set; } = string.Empty;
@@ -22,6 +17,5 @@ public class Vaga
     public string Descricao { get; set; } = string.Empty;
     public decimal? SalarioPrevisto { get; set; }
     public bool Interna { get; set; }
-    public DateTime DataCadastro { get; set; }
     public DateTime DataFimInscricoes { get; set; }
 }

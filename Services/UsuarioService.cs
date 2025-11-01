@@ -82,7 +82,7 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
         {
             Subject = new ClaimsIdentity([
                 new Claim("Id", usuario.Id.ToString()),
-                new Claim(ClaimTypes.Role, usuario.Perfil.ToString()),
+                new Claim(ClaimTypes.Role, usuario.Perfil.ToString())
             ]),
             Expires = DateTime.UtcNow.AddDays(1),
             Audience = _jwt.Audience,

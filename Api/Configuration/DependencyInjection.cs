@@ -21,6 +21,7 @@ public static class DependencyInjection
         servicos.AddSingleton<UsuarioRepository>();
         servicos.AddSingleton<CandidatoRepository>();
         servicos.AddSingleton<EmpresaRepository>();
+        servicos.AddSingleton<VagaRepository>();
         #endregion
 
         // Services

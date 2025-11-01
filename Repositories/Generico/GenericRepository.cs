@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using Dapper;
 using Repositories.Generico.Interface;
+using Utils;
 
 namespace Repositories.Generico;
 
@@ -9,13 +10,21 @@ public class GenericRepository<T>(IConfiguration configuration) : IGenericReposi
 {
     private readonly string _connectionString = configuration.GetConnectionString("TechJobs") ?? "";
 
-    protected readonly string TableName = typeof(T).Name;
+    private readonly string obterPorIdQuery = $"SELECT * FROM [{typeof(T).Name}] WHERE Id = @id";
+
+    private readonly string obterTodosQuery = $"SELECT * FROM [{typeof(T).Name}]";
+
+    private readonly string deleteQuery = $"DELETE FROM [{typeof(T).Name}] WHERE Id = @id";
+
+    private readonly string insertQuery = SqlHelper.GerarInsertQuery<T>();
 
     protected SqlConnection CriarConexao() => new(_connectionString);
 
     public virtual int Adicionar(T obj)
     {
-        throw new NotImplementedException("Deve ser implementado no repositório específico.");
+        using var conexao = CriarConexao();
+
+        return conexao.ExecuteScalar<int>(insertQuery, obj);
     }
 
     public virtual void Editar(T obj)
@@ -27,26 +36,20 @@ public class GenericRepository<T>(IConfiguration configuration) : IGenericReposi
     {
         using var conexao = CriarConexao();
 
-        string sqlCommand = $"DELETE FROM [{TableName}] WHERE Id = @id";
-
-        conexao.Execute(sqlCommand, new { id });
+        conexao.Execute(deleteQuery, new { id });
     }
 
     public virtual T? ObterPorId(int id)
     {
         using var conexao = CriarConexao();
 
-        string sqlCommand = $"SELECT * FROM [{TableName}] WHERE Id = @id";
-
-        return conexao.QuerySingleOrDefault<T>(sqlCommand, new { id });
+        return conexao.QuerySingleOrDefault<T>(obterPorIdQuery, new { id });
     }
 
     public virtual IList<T> ObterTodos()
     {
         using var conexao = CriarConexao();
 
-        string sqlCommand = $"SELECT * FROM [{TableName}]";
-
-        return [..conexao.Query<T>(sqlCommand)];
+        return [..conexao.Query<T>(obterTodosQuery)];
     }
 }
