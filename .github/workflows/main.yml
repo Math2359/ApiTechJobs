@@ -32,7 +32,7 @@ jobs:
       uses: aws-actions/aws-lambda-deploy@v1.1.0
       with:
         function-name: ApiTechJobsLambda
-        code-artifacts-dir: bin/Release/net8.0
+        code-artifacts-dir: Api/bin/Release/net8.0
         handler: Api
         runtime: dotnet8
         publish: true
