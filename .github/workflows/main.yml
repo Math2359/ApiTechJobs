@@ -10,22 +10,36 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy
+    name: Deploy to AWS Lambda
     runs-on: ubuntu-latest
     environment: production
 
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v5
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore Api/Api.csproj
+
+    - name: Publish Lambda package
+      run: dotnet publish Api/Api.csproj -c Release -o ./publish
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: ${{ secrets.DEPLOY_ROLE }}
         aws-region: ${{ secrets.AWS_REGION }}
-        # The role-to-assume should be the ARN of the IAM role you created for GitHub Actions
-        
-    - name: Entrar na pasta da API
-      run: |
-        cd Api
-        dir
+
+    - name: Deploy to Lambda
+      uses: aws-actions/aws-lambda-deploy@v1.1.0
+      with:
+        function-name: ApiTechJobsLambda
+        code-artifacts-dir: ./publish
+        publish: true
+        handler: Api
+        runtime: dotnet8
