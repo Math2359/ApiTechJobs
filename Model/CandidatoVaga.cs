@@ -1,12 +1,12 @@
-﻿using Model.Enum;
-using Utils;
+﻿using Model.Attributes;
+using Model.Enum;
 
 namespace Model;
 
 public class CandidatoVaga
 {
 
-    [IgnoreInsert]
+    [IgnorarInsert]
     public int Id { get; set; }
     public int IdCandidato { get; set; }
     public int IdVaga { get; set; }

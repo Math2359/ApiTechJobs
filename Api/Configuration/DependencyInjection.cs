@@ -29,6 +29,7 @@ public static class DependencyInjection
         servicos.AddScoped<IUsuarioService, UsuarioService>();
         servicos.AddScoped<ICandidatoService, CandidatoService>();
         servicos.AddScoped<IEmpresaService, EmpresaService>();
+        servicos.AddScoped<IVagaService, VagaService>();
         #endregion
 
         return servicos;

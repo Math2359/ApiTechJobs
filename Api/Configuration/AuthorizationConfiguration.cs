@@ -59,6 +59,10 @@ public static class AuthorizationConfiguration
     {
         services.AddSwaggerGen(opcao =>
         {
+            var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            opcao.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+
             opcao.SwaggerDoc("v1", new OpenApiInfo { Title = "TechJobs API", Version = "v1" });
             opcao.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {

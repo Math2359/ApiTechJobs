@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Model;
+using Model.Request;
 using Repositories.Generico;
 using System;
 using System.Collections.Generic;
@@ -22,5 +23,20 @@ public class VagaRepository(IConfiguration configuration) : GenericRepository<Va
                                     WHERE IdUsuario = @idUsuarioEmpresa";
 
         return [..conexao.Query<Vaga>(sqlCommand, new { idUsuarioEmpresa })];
+    }
+
+    public IList<Vaga> ObterTodos(ObterTodasVagasRequest request)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"SELECT *
+                                    FROM Vaga
+                                    WHERE
+                                        (NULLIF(@Cargo, '') IS NULL OR Cargo LIKE '%' + @Cargo + '%')
+                                    AND (NULLIF(@NivelExperiencia, '') IS NULL OR NivelExperiencia LIKE '%' + @NivelExperiencia + '%')
+                                    AND (NULLIF(@Modelo, '') IS NULL OR Modelo LIKE '%' + @Modelo + '%')
+                                    AND (NULLIF(@CEP, '') IS NULL OR Cep LIKE '%' + @CEP + '%')";
+
+        return [.. conexao.Query<Vaga>(sqlCommand, request)];
     }
 }
