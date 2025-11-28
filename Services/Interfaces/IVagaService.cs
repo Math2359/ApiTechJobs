@@ -13,4 +13,5 @@ public interface IVagaService
     Vaga? ObterVaga(int id);
     void Excluir(int id);
     IList<Vaga> ObterTodas(ObterTodasVagasRequest request);
+    bool ValidarVagaEmpresa(int idVaga, int idUsuarioEmpresa);
 }

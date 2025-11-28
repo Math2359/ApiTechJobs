@@ -19,4 +19,6 @@ public class VagaService(VagaRepository vagaRepository) : IVagaService
     public void Excluir(int id) => _vagaRepository.Excluir(id);
 
     public IList<Vaga> ObterTodas(ObterTodasVagasRequest request) => _vagaRepository.ObterTodos(request);
+
+    public bool ValidarVagaEmpresa(int idVaga, int idUsuarioEmpresa) => _vagaRepository.ObterVagaPorIdUsuarioEmpresa(idVaga, idUsuarioEmpresa) != null;
 }

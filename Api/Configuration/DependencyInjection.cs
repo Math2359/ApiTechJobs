@@ -15,6 +15,11 @@ public static class DependencyInjection
     /// <returns></returns>
     public static IServiceCollection ConfigurarServicos(this IServiceCollection servicos)
     {
+        // Action filters
+        #region Action filters
+        servicos.AddScoped<VagaActionFilter>();
+        #endregion
+
         // Repositories
         #region Repositories
         servicos.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

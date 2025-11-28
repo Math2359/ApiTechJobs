@@ -39,4 +39,19 @@ public class VagaRepository(IConfiguration configuration) : GenericRepository<Va
 
         return [.. conexao.Query<Vaga>(sqlCommand, request)];
     }
+
+    public Vaga? ObterVagaPorIdUsuarioEmpresa(int idVaga, int idUsuarioEmpresa)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"SELECT *
+                                    FROM Vaga
+                                    AS V
+                                    JOIN Empresa AS E
+                                    ON V.IdEmpresa = E.Id
+                                    WHERE V.Id = @idVaga AND IdUsuario = @idUsuarioEmpresa
+                                    AND IdEmpresa = @idUsuarioEmpresa";
+
+        return conexao.QuerySingleOrDefault<Vaga>(sqlCommand, new { idVaga, idUsuarioEmpresa });
+    }
 }

@@ -74,6 +74,7 @@ namespace Api.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [VagaActionFilter]
         [HttpDelete("{id}")]
         [AutorizarPerfis(EnumPerfil.Empresa)]
         public IActionResult ExcluirVaga([FromRoute] int id)
