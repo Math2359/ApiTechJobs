@@ -4,6 +4,7 @@ using Model;
 using Model.Enum;
 using Model.Options;
 using Model.Request;
+using Model.Response;
 using Repositories;
 using Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
@@ -63,16 +64,16 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
 
     }
 
-    public string LogarUsuario(LogarUsuarioRequest logarUsuario)
+    public LogarUsuarioResponse LogarUsuario(LogarUsuarioRequest logarUsuario)
     {
-        var usuario = _usuarioRepository.ObterUsuarioPorLogin(logarUsuario.Login) ?? throw new Exception("Usuario ou senha incorretos!");
+        var usuario = _usuarioRepository.ObterCredenciaisUsuario(logarUsuario.Login) ?? throw new Exception("Usuario ou senha incorretos!");
 
         if (!usuario.Senha.VerificarSenha(logarUsuario.Senha)) throw new Exception("Usuario ou senha incorretos!");
 
         return GerarToken(usuario);
     }
 
-    private string GerarToken(Usuario usuario)
+    private LogarUsuarioResponse GerarToken(CredenciaisUsuarioDTO usuario)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -92,6 +93,11 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
-        return tokenHandler.WriteToken(token);
+        return new LogarUsuarioResponse
+        {
+            Token = tokenHandler.WriteToken(token),
+            Email = usuario.Email,
+            NomeUsuario = usuario.Nome
+        };
     }
 }

@@ -7,13 +7,17 @@ namespace Repositories;
 
 public class UsuarioRepository(IConfiguration configuration) : GenericRepository<Usuario>(configuration)
 {
-
-    public Usuario? ObterUsuarioPorLogin(string login)
+    public CredenciaisUsuarioDTO? ObterCredenciaisUsuario(string login)
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = "SELECT Id, Perfil, Login, Senha, DataCadastro FROM Usuario WHERE Login = @login";
+        const string sqlCommand = @"SELECT U.Id, U.Perfil, U.Senha, COALESCE(E.Email, C.Email) AS Email, COALESCE(E.Nome, C.Nome) AS Nome FROM Usuario AS U
+                                    LEFT JOIN Empresa AS E
+                                    ON E.IdUsuario = U.Id
+                                    LEFT JOIN Candidato AS C
+                                    ON C.IdUsuario = U.Id
+                                    WHERE U.Login = @login";
 
-        return conexao.QuerySingleOrDefault<Usuario>(sqlCommand, new { login });
+        return conexao.QuerySingleOrDefault<CredenciaisUsuarioDTO>(sqlCommand, new { login });
     }
 }
