@@ -17,5 +17,5 @@ public class AdicionarVagaRequest
     public string Descricao { get; set; } = string.Empty;
     public decimal? SalarioPrevisto { get; set; }
     public bool Interna { get; set; }
-    public DateTime DataFimInscricoes { get; set; }
+    public DateTime? DataFimInscricoes { get; set; }
 }

@@ -28,7 +28,7 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
             Cargo = novaVaga.Cargo,
             Cep = novaVaga.Cep,
             DataCadastro = DateTime.Now,
-            DataFimInscricoes = novaVaga.DataFimInscricoes,
+            DataFimInscricoes = novaVaga.DataFimInscricoes ?? DateTime.Now,
             Descricao = novaVaga.Descricao,
             IdEmpresa = empresa.Id,
             Interna = novaVaga.Interna,
