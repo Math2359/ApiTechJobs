@@ -1,4 +1,5 @@
 ﻿using Model;
+using Model.Enum;
 using Model.Request;
 using Model.Response;
 using System;
@@ -15,4 +16,5 @@ public interface IEmpresaService
     Empresa ObterEmpresaPorIdUsuario(int idUsuario);
     int AdicionarVaga(int idUsuario, AdicionarVagaRequest novaVaga);
     IList<VagaResponse> ObterVagas(int idUsuario);
+    void RetornarResultado(int idAplicacao, EnumSituacao situacao);
 }

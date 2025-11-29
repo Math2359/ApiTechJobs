@@ -25,4 +25,13 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
 
         return [.. conexao.Query<CandidatoVagaDTO>(sqlCommand, new { idVaga })];
     }
+
+    public override void Editar(CandidatoVaga obj)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = "UPDATE CandidatoVaga SET Situacao = @Situacao WHERE Id = @Id";
+
+        conexao.Execute(sqlCommand, obj);
+    }
 }

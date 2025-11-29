@@ -39,5 +39,13 @@ namespace Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
             }
         }
+
+        [HttpPost("aplicacao-vaga/{idAplicacao}/{situacao}")]
+        public IActionResult RetornarResultado([FromRoute] int idAplicacao, [FromRoute] EnumSituacao situacao)
+        {
+            _empresaService.RetornarResultado(idAplicacao, situacao);
+
+            return NoContent();
+        }
     }
 }

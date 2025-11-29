@@ -1,20 +1,17 @@
 ﻿using Model;
+using Model.Enum;
 using Model.Request;
 using Model.Response;
 using Repositories;
 using Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services;
 
-public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository) : IEmpresaService
+public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository) : IEmpresaService
 {
     private readonly EmpresaRepository _empresaRepository = empresaRepository;
     private readonly VagaRepository _vagaRepository = vagaRepository;
+    private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
 
     public int Adicionar(Empresa empresa) => _empresaRepository.Adicionar(empresa);
 
@@ -44,4 +41,10 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
     }
 
     public IList<VagaResponse> ObterVagas(int idUsuario) => _vagaRepository.ObterVagasPorIdUsuarioEmpresa(idUsuario);
+
+    public void RetornarResultado(int idAplicacao, EnumSituacao situacao) => _candidatoVagaRepository.Editar(new CandidatoVaga
+    {
+        Id = idAplicacao,
+        Situacao = situacao,
+    });
 }
