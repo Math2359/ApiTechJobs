@@ -97,7 +97,8 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
         {
             Token = tokenHandler.WriteToken(token),
             Email = usuario.Email,
-            NomeUsuario = usuario.Nome
+            NomeUsuario = usuario.Nome,
+            Perfil = usuario.Perfil,
         };
     }
 }
