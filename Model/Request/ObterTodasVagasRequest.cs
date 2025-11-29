@@ -8,8 +8,7 @@ namespace Model.Request;
 
 public class ObterTodasVagasRequest
 {
-    public string? Cargo { get; set; }
-    public string? NivelExperiencia { get; set; }
-    public string? Modelo { get; set; }
-    public string? CEP { get; set; }
+    public decimal? SalarioInicio { get; set; }
+    public decimal? SalarioFim { get; set; }
+    public string? TermoBusca { get; set; }
 }

@@ -25,6 +25,7 @@ public static class DependencyInjection
         servicos.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         servicos.AddSingleton<UsuarioRepository>();
         servicos.AddSingleton<CandidatoRepository>();
+        servicos.AddSingleton<CandidatoVagaRepository>();
         servicos.AddSingleton<EmpresaRepository>();
         servicos.AddSingleton<VagaRepository>();
         #endregion

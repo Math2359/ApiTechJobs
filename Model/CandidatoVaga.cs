@@ -11,4 +11,5 @@ public class CandidatoVaga
     public int IdCandidato { get; set; }
     public int IdVaga { get; set; }
     public EnumSituacao Situacao { get; set; }
+    public string? FileKey { get; set; }
 }

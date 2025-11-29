@@ -69,6 +69,16 @@ namespace Api.Controllers
             return Ok(vaga);
         }
 
+        [VagaActionFilter]
+        [AutorizarPerfis(EnumPerfil.Empresa)]
+        [HttpGet("empresa/{id}")]
+        public IActionResult ObterVagaEmpresa([FromRoute] int id)
+        {
+            var vaga = _vagaService.ObterVagaEmpresaPorId(id);
+
+            return Ok(vaga);
+        }
+
         /// <summary>
         /// Exclui uma vaga
         /// </summary>

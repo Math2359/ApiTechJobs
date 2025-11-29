@@ -34,19 +34,32 @@ public class VagaRepository(IConfiguration configuration) : GenericRepository<Va
         return [..conexao.Query<VagaResponse>(sqlCommand, new { idUsuarioEmpresa })];
     }
 
-    public IList<Vaga> ObterTodos(ObterTodasVagasRequest request)
+    public IList<VagaCandidatoResponse> ObterTodos(ObterTodasVagasRequest request)
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = @"SELECT *
-                                    FROM Vaga
+        const string sqlCommand = @"SELECT V.*, E.Nome AS NomeEmpresa
+                                    FROM Vaga AS V
+                                    LEFT JOIN Empresa AS E
+                                    ON E.Id = V.IdEmpresa
                                     WHERE
-                                        (NULLIF(@Cargo, '') IS NULL OR Cargo LIKE '%' + @Cargo + '%')
-                                    AND (NULLIF(@NivelExperiencia, '') IS NULL OR NivelExperiencia LIKE '%' + @NivelExperiencia + '%')
-                                    AND (NULLIF(@Modelo, '') IS NULL OR Modelo LIKE '%' + @Modelo + '%')
-                                    AND (NULLIF(@CEP, '') IS NULL OR Cep LIKE '%' + @CEP + '%')";
+                                        (
+                                            NULLIF(@TermoBusca, '') IS NULL
+                                            OR (
+                                                Cargo LIKE '%' + @TermoBusca + '%'
+                                                OR NivelExperiencia LIKE '%' + @TermoBusca + '%'
+                                                OR Modelo LIKE '%' + @TermoBusca + '%'
+                                                OR V.Cep LIKE '%' + @TermoBusca + '%'
+                                            )
+                                        )
+                                        AND (
+                                            @SalarioInicio IS NULL OR SalarioPrevisto >= @SalarioInicio
+                                        ) AND (
+                                            @SalarioFim IS NULL OR SalarioPrevisto <= @SalarioFim
+                                        );
+                                    ";
 
-        return [.. conexao.Query<Vaga>(sqlCommand, request)];
+        return [.. conexao.Query<VagaCandidatoResponse>(sqlCommand, request)];
     }
 
     public Vaga? ObterVagaPorIdUsuarioEmpresa(int idVaga, int idUsuarioEmpresa)

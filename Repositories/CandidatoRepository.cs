@@ -13,5 +13,12 @@ namespace Repositories;
 
 public class CandidatoRepository(IConfiguration configuration) : GenericRepository<Candidato>(configuration)
 {
+    public Candidato ObterCandidatoPorIdUsuario(int idUsuario)
+    {
+        using var conexao = CriarConexao();
 
+        const string sqlCommand = "SELECT * FROM Candidato WHERE IdUsuario = @idUsuario";
+
+        return conexao.QuerySingle<Candidato>(sqlCommand, new { idUsuario });
+    }
 }
