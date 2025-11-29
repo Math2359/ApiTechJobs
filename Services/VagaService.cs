@@ -1,4 +1,6 @@
-﻿using Model;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using Model;
 using Model.Request;
 using Model.Response;
 using Repositories;
@@ -15,6 +17,9 @@ public class VagaService(VagaRepository vagaRepository, CandidatoVagaRepository 
 {
     private readonly VagaRepository _vagaRepository = vagaRepository;
     private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
+    
+    private readonly string _bucketName = "s3-bucket-techjobs";
+    private readonly string _folder = "cv";
 
     public Vaga? ObterVaga(int id) => _vagaRepository.ObterPorId(id);
 
@@ -34,5 +39,22 @@ public class VagaService(VagaRepository vagaRepository, CandidatoVagaRepository 
             Aplicacoes = aplicacoes ?? [],
             Vaga = vaga
         };
+    }
+
+    public string GerarUrlAssinada(int id)
+    {
+        var aplicacao = _candidatoVagaRepository.ObterPorId(id);
+
+        var s3client = new AmazonS3Client();
+
+        var request = new GetPreSignedUrlRequest
+        {
+            BucketName = _bucketName,
+            Key = aplicacao.FileKey,
+            Expires = DateTime.UtcNow.AddMinutes(15),
+        };
+
+        // Gera a URL
+        return s3client.GetPreSignedURL(request);
     }
 }

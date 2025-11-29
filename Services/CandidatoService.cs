@@ -21,8 +21,8 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Candidato
     private readonly CandidatoRepository _candidatoRepository = candidatoRepository;
     private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
 
-    private string _bucketName = "s3-bucket-techjobs";
-    private string _folder = "cv";
+    private readonly string _bucketName = "s3-bucket-techjobs";
+    private readonly string _folder = "cv";
 
     public void Adicionar(Candidato candidato) => _candidatoRepository.Adicionar(candidato);
 

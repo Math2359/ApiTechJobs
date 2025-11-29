@@ -40,6 +40,19 @@ namespace Api.Controllers
         {
             var vagas = _empresaService.ObterVagas(User.ObterId());
 
+           
+            return Ok(vagas);
+        }
+        /// <summary>
+        /// Obtém as vagas de uma empresa
+        /// </summary>
+        /// <returns>Lista de vagas</returns>
+        [AutorizarPerfis(EnumPerfil.Empresa)]
+        [HttpGet("url-cv-aplicacao/{id}")]
+        public IActionResult GerarUrlAssinada(int id)
+        {
+            var vagas = _vagaService.GerarUrlAssinada(id);
+
             return Ok(vagas);
         }
 
