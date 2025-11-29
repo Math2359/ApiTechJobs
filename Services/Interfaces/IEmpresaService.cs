@@ -1,5 +1,6 @@
 ﻿using Model;
 using Model.Request;
+using Model.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,5 @@ public interface IEmpresaService
     int Adicionar(Empresa empresa);
     Empresa ObterEmpresaPorIdUsuario(int idUsuario);
     int AdicionarVaga(int idUsuario, AdicionarVagaRequest novaVaga);
-    IList<Vaga> ObterVagas(int idUsuario);
+    IList<VagaResponse> ObterVagas(int idUsuario);
 }

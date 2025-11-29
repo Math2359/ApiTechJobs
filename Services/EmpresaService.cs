@@ -1,5 +1,6 @@
 ﻿using Model;
 using Model.Request;
+using Model.Response;
 using Repositories;
 using Services.Interfaces;
 using System;
@@ -42,5 +43,5 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
         return _vagaRepository.Adicionar(vaga);
     }
 
-    public IList<Vaga> ObterVagas(int idUsuario) => _vagaRepository.ObterVagasPorIdUsuarioEmpresa(idUsuario);
+    public IList<VagaResponse> ObterVagas(int idUsuario) => _vagaRepository.ObterVagasPorIdUsuarioEmpresa(idUsuario);
 }
