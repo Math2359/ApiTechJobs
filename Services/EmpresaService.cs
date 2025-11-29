@@ -47,4 +47,14 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
         Id = idAplicacao,
         Situacao = situacao,
     });
+
+    public DashboardEmpresaResponse ObterDadosDashboard(int idUsuario)
+    {
+        int vagas = _vagaRepository.ObterVagasDisponiveis(idUsuario);
+
+        var dados = _candidatoVagaRepository.ObterDadosDashboardEmpresa(idUsuario);
+        dados.VagasDisponiveis = vagas;
+
+        return dados;
+    }
 }

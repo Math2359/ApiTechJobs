@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Model;
 using Model.Enum;
 using Model.Request;
+using Model.Response;
 using Repositories;
 using Repositories.Generico.Interface;
 using Services.Interfaces;
@@ -16,10 +17,11 @@ using System.Threading.Tasks;
 
 namespace Services;
 
-public class CandidatoService(CandidatoRepository candidatoRepository, CandidatoVagaRepository candidatoVagaRepository) : ICandidatoService
+public class CandidatoService(CandidatoRepository candidatoRepository, CandidatoVagaRepository candidatoVagaRepository, VagaRepository vagaRepository) : ICandidatoService
 {
     private readonly CandidatoRepository _candidatoRepository = candidatoRepository;
     private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
+    private readonly VagaRepository _vagaRepository = vagaRepository;
 
     private readonly string _bucketName = "s3-bucket-techjobs";
     private readonly string _folder = "cv";
@@ -70,5 +72,17 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Candidato
             IdVaga = aplicarVaga.IdVaga,
             Situacao = EnumSituacao.EmAnalise
         });
+    }
+
+    public IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario) =>_candidatoVagaRepository.ObterAplicacoesPorCandidato(idUsuario);
+
+    public DashboardCandidatoResponse ObterDadosDashboard(int idUsuario)
+    {
+        int vagas = _vagaRepository.ObterVagasDisponiveis();
+
+        var dados = _candidatoVagaRepository.ObterDadosDashboard(idUsuario);
+        dados.VagasDisponiveis = vagas;
+
+        return dados;
     }
 }

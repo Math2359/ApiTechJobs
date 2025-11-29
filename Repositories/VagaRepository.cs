@@ -75,4 +75,25 @@ public class VagaRepository(IConfiguration configuration) : GenericRepository<Va
 
         return conexao.QuerySingleOrDefault<Vaga>(sqlCommand, new { idVaga, idUsuarioEmpresa });
     }
+
+    public int ObterVagasDisponiveis()
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = "SELECT COUNT(*) FROM Vaga WHERE Interna = 0";
+
+        return conexao.ExecuteScalar<int>(sqlCommand);
+    }
+
+    public int ObterVagasDisponiveis(int idUsuarioEmpresa)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"SELECT COUNT(*) FROM Vaga AS V
+                                    LEFT JOIN Empresa AS E ON
+                                    E.Id = V.IdEmpresa
+                                    WHERE Interna = 0 AND E.IdUsuario = @idUsuarioEmpresa";
+
+        return conexao.ExecuteScalar<int>(sqlCommand, new { idUsuarioEmpresa });
+    }
 }

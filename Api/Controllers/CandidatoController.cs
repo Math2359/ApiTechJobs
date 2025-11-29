@@ -29,5 +29,21 @@ namespace Api.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("aplicacoes")]
+        public IActionResult ObterAplicacoes()
+        {
+            var aplicacoes = _candidatoService.ObterAplicacoes(User.ObterId());
+
+            return Ok(aplicacoes);
+        }
+
+        [HttpGet("dashboard")]
+        public IActionResult ObterDadosDashboard()
+        {
+            var dados = _candidatoService.ObterDadosDashboard(User.ObterId());
+
+            return Ok(dados);
+        }
     }
 }

@@ -6,6 +6,7 @@ using Model;
 using Model.Enum;
 using Model.Request;
 using Model.Response;
+using Services;
 using Services.Interfaces;
 using System.Security.Claims;
 using Utils;
@@ -46,6 +47,14 @@ namespace Api.Controllers
             _empresaService.RetornarResultado(idAplicacao, situacao);
 
             return NoContent();
+        }
+
+        [HttpGet("dashboard")]
+        public IActionResult ObterDadosDashboard()
+        {
+            var dados = _empresaService.ObterDadosDashboard(User.ObterId());
+
+            return Ok(dados);
         }
     }
 }
