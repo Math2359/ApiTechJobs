@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Model;
 using Model.Request;
+using Model.Response;
 using Repositories.Generico;
 using System;
 using System.Collections.Generic;
@@ -13,16 +14,24 @@ namespace Repositories;
 
 public class VagaRepository(IConfiguration configuration) : GenericRepository<Vaga>(configuration)
 {
-    public IList<Vaga> ObterVagasPorIdUsuarioEmpresa(int idUsuarioEmpresa)
+    public IList<VagaResponse> ObterVagasPorIdUsuarioEmpresa(int idUsuarioEmpresa)
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = @"SELECT V.* FROM Vaga AS V
-                                    LEFT JOIN Empresa AS E
+        const string sqlCommand = @"SELECT 
+                                    V.*,
+                                    (
+                                        SELECT COUNT(*)
+                                        FROM CandidatoVaga AS CV
+                                        WHERE CV.IdVaga = V.Id
+                                    ) AS QuantidadeAplicacoes
+                                FROM Vaga AS V
+                                LEFT JOIN Empresa AS E
                                     ON V.IdEmpresa = E.Id
-                                    WHERE IdUsuario = @idUsuarioEmpresa";
+                                WHERE E.IdUsuario = @idUsuarioEmpresa;
+                                ";
 
-        return [..conexao.Query<Vaga>(sqlCommand, new { idUsuarioEmpresa })];
+        return [..conexao.Query<VagaResponse>(sqlCommand, new { idUsuarioEmpresa })];
     }
 
     public IList<Vaga> ObterTodos(ObterTodasVagasRequest request)
