@@ -58,8 +58,7 @@ public class VagaRepository(IConfiguration configuration) : GenericRepository<Va
                                     AS V
                                     JOIN Empresa AS E
                                     ON V.IdEmpresa = E.Id
-                                    WHERE V.Id = @idVaga AND IdUsuario = @idUsuarioEmpresa
-                                    AND IdEmpresa = @idUsuarioEmpresa";
+                                    WHERE V.Id = @idVaga AND IdUsuario = @idUsuarioEmpresa";
 
         return conexao.QuerySingleOrDefault<Vaga>(sqlCommand, new { idVaga, idUsuarioEmpresa });
     }
