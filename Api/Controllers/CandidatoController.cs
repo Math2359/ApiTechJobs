@@ -45,6 +45,7 @@ namespace Api.Controllers
             return Ok(dados);
         }
 
+        [HttpGet("testar")]
         public IActionResult Testar()
         {
             return Ok("SUBIU NOVO");
