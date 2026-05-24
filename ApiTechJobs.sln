@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{ACB5E222-2330-4CE3-9762-444B447702CA}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Database", "Database\Database.sqlproj", "{34E66FAA-74E9-48E2-96CD-F16B0BF4986B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,12 @@ Global
 		{ACB5E222-2330-4CE3-9762-444B447702CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACB5E222-2330-4CE3-9762-444B447702CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACB5E222-2330-4CE3-9762-444B447702CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34E66FAA-74E9-48E2-96CD-F16B0BF4986B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34E66FAA-74E9-48E2-96CD-F16B0BF4986B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34E66FAA-74E9-48E2-96CD-F16B0BF4986B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{34E66FAA-74E9-48E2-96CD-F16B0BF4986B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34E66FAA-74E9-48E2-96CD-F16B0BF4986B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34E66FAA-74E9-48E2-96CD-F16B0BF4986B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

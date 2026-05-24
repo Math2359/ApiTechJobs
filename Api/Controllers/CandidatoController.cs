@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Model.Enum;
 using Model.Request;
 using Model.Response;
-using Services;
 using Services.Interfaces;
 
 namespace Api.Controllers
@@ -44,6 +43,11 @@ namespace Api.Controllers
             var dados = _candidatoService.ObterDadosDashboard(User.ObterId());
 
             return Ok(dados);
+        }
+
+        public IActionResult Testar()
+        {
+            return Ok("SUBIU NOVO");
         }
     }
 }
