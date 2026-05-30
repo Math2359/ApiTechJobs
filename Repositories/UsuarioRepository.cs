@@ -21,12 +21,22 @@ public class UsuarioRepository(IConfiguration configuration) : GenericRepository
         return conexao.QuerySingleOrDefault<CredenciaisUsuarioDTO>(sqlCommand, new { login });
     }
 
-    public Usuario? ObterPorLogin(string login)
+    public Usuario? ObterPorLoginEDocumento(string login, string documento)
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = "SELECT * FROM Usuario WHERE Login = @login";
+        const string sqlCommand = @"
+        SELECT DISTINCT U.*
+        FROM Usuario U
+        LEFT JOIN Empresa E ON E.IdUsuario = U.Id
+        LEFT JOIN Candidato C ON C.IdUsuario = U.Id
+        WHERE U.Login = @login
+           OR E.CNPJ = @documento
+           OR C.CPF = @documento";
 
-        return conexao.QuerySingleOrDefault<Usuario>(sqlCommand, new { login });
+        return conexao.QuerySingleOrDefault<Usuario>(
+            sqlCommand,
+            new { login, documento }
+        );
     }
 }
