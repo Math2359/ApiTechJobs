@@ -23,6 +23,11 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
 
     public void NovoUsuario(NovoUsuarioRequest novoUsuario)
     {
+        var usuarioExiste = _usuarioRepository.ObterPorLogin(novoUsuario.Login) is not null;
+
+        if (usuarioExiste)
+            throw new Exception("E-mail já cadastrado na plataforma");
+
         var usuario = new Usuario
         {
             DataCadastro = DateTime.Now,

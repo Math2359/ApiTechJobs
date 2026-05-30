@@ -21,4 +21,13 @@ public class CandidatoRepository(IConfiguration configuration) : GenericReposito
 
         return conexao.QuerySingle<Candidato>(sqlCommand, new { idUsuario });
     }
+
+    public Candidato? ObterCandidatoPorDocumento(string documento)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = "SELECT * FROM Candidato WHERE Cpf = @documento";
+
+        return conexao.QuerySingleOrDefault<Candidato>(sqlCommand, new { documento });
+    }
 }

@@ -20,4 +20,13 @@ public class EmpresaRepository(IConfiguration configuration) : GenericRepository
 
         return conexao.QuerySingle<Empresa>(sqlCommand, new { idUsuario });
     }
+
+    public Empresa? ObterEmpresaPorDocumento(string documento)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = "SELECT * FROM Empresa WHERE Cnpj = @documento";
+
+        return conexao.QuerySingleOrDefault<Empresa>(sqlCommand, new { documento });
+    }
 }

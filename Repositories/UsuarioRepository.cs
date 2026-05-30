@@ -20,4 +20,13 @@ public class UsuarioRepository(IConfiguration configuration) : GenericRepository
 
         return conexao.QuerySingleOrDefault<CredenciaisUsuarioDTO>(sqlCommand, new { login });
     }
+
+    public Usuario? ObterPorLogin(string login)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = "SELECT * FROM Usuario WHERE Login = @login";
+
+        return conexao.QuerySingleOrDefault<Usuario>(sqlCommand, new { login });
+    }
 }

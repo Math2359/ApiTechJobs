@@ -26,7 +26,15 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Candidato
     private readonly string _bucketName = "s3-bucket-techjobs";
     private readonly string _folder = "cv";
 
-    public void Adicionar(Candidato candidato) => _candidatoRepository.Adicionar(candidato);
+    public void Adicionar(Candidato candidato)
+    {
+        var candidatoExiste = _candidatoRepository.ObterCandidatoPorDocumento(candidato.Cpf) is not null;
+
+        if (candidatoExiste)
+            throw new Exception("Usuário já existe na plataforma");
+
+        _candidatoRepository.Adicionar(candidato);
+    }
 
     private async Task<string> UploadFileAsync(IFormFile file, string folder)
     {

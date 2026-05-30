@@ -13,7 +13,15 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
     private readonly VagaRepository _vagaRepository = vagaRepository;
     private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
 
-    public int Adicionar(Empresa empresa) => _empresaRepository.Adicionar(empresa);
+    public int Adicionar(Empresa empresa)
+    {
+        var empresaExiste = _empresaRepository.ObterEmpresaPorDocumento(empresa.Cnpj) is not null;
+
+        if (empresaExiste)
+            throw new Exception("Usuário já existe na plataforma");
+
+        return _empresaRepository.Adicionar(empresa);
+    }
 
     public Empresa ObterEmpresaPorIdUsuario(int idUsuario) => _empresaRepository.ObterEmpresaPorIdUsuario(idUsuario);
 
