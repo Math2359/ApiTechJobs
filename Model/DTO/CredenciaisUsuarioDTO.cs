@@ -1,6 +1,6 @@
 ﻿using Model.Enum;
 
-namespace Model;
+namespace Model.DTO;
 
 public class CredenciaisUsuarioDTO
 {

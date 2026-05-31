@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Model;
+using Model.DTO;
 using Model.Response;
 using Repositories.Generico;
 using System;

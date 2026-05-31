@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Model;
+using Model.DTO;
 using Model.Enum;
 using Model.Options;
 using Model.Request;

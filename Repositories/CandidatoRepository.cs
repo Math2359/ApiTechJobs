@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Model;
+using Model.DTO;
 using Repositories.Generico;
 using Repositories.Generico.Interface;
 using System;

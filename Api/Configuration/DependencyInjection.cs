@@ -28,6 +28,8 @@ public static class DependencyInjection
         servicos.AddSingleton<CandidatoVagaRepository>();
         servicos.AddSingleton<EmpresaRepository>();
         servicos.AddSingleton<VagaRepository>();
+        servicos.AddSingleton<ExperienciaCandidatoRepository>();
+        servicos.AddSingleton<InformacaoCandidatoRepository>();
         #endregion
 
         // Services

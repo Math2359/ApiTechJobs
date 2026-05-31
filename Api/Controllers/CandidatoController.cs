@@ -44,5 +44,21 @@ namespace Api.Controllers
 
             return Ok(dados);
         }
+
+        [HttpGet("experiencias")]
+        public IActionResult ObterExperienciasCandidato()
+        {
+            var experiencias = _candidatoService.ObterExperienciasCandidato(User.ObterId());
+
+            return Ok(experiencias);
+        }
+
+        [HttpGet("informacoes")]
+        public IActionResult ObterInformacoesPorUsuario()
+        {
+            var informacoes = _candidatoService.ObterInformacoesPorUsuario(User.ObterId());
+
+            return Ok(informacoes);
+        }
     }
 }

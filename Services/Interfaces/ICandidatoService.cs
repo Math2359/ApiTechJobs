@@ -1,4 +1,5 @@
 ﻿using Model;
+using Model.DTO;
 using Model.Request;
 using Model.Response;
 using System;
@@ -15,4 +16,6 @@ public interface ICandidatoService
     Task AplicarVaga(AplicarVagaRequest aplicarVaga);
     IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario);
     DashboardCandidatoResponse ObterDadosDashboard(int idUsuario);
+    IEnumerable<ExperienciaCandidatoDTO> ObterExperienciasCandidato(int idUsuario);
+    InformacaoCandidato? ObterInformacoesPorUsuario(int idUsuario);
 }

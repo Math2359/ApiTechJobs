@@ -1,28 +1,19 @@
 ﻿using Amazon.S3;
-using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Microsoft.AspNetCore.Http;
 using Model;
+using Model.DTO;
 using Model.Enum;
 using Model.Request;
 using Model.Response;
 using Repositories;
-using Repositories.Generico.Interface;
 using Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Services;
 
-public class CandidatoService(CandidatoRepository candidatoRepository, CandidatoVagaRepository candidatoVagaRepository, VagaRepository vagaRepository) : ICandidatoService
+public class CandidatoService(CandidatoRepository _candidatoRepository, InformacaoCandidatoRepository _informacaoCandidatoRepository, ExperienciaCandidatoRepository _experienciaCandidatoRepository, CandidatoVagaRepository _candidatoVagaRepository, VagaRepository _vagaRepository) : ICandidatoService
 {
-    private readonly CandidatoRepository _candidatoRepository = candidatoRepository;
-    private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
-    private readonly VagaRepository _vagaRepository = vagaRepository;
-
     private readonly string _bucketName = "s3-bucket-techjobs";
     private readonly string _folder = "cv";
 
@@ -74,7 +65,7 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Candidato
         });
     }
 
-    public IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario) =>_candidatoVagaRepository.ObterAplicacoesPorCandidato(idUsuario);
+    public IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario) => _candidatoVagaRepository.ObterAplicacoesPorCandidato(idUsuario);
 
     public DashboardCandidatoResponse ObterDadosDashboard(int idUsuario)
     {
@@ -85,4 +76,7 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Candidato
 
         return dados;
     }
+
+    public IEnumerable<ExperienciaCandidatoDTO> ObterExperienciasCandidato(int idUsuario) => _experienciaCandidatoRepository.ObterExperienciasCandidato(idUsuario);
+    public InformacaoCandidato? ObterInformacoesPorUsuario(int idUsuario) => _informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
 }

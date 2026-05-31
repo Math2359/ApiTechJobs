@@ -64,5 +64,7 @@
     <Build Include="Candidato.sql" />
     <Build Include="Vaga.sql" />
     <Build Include="CandidatoVaga.sql" />
+    <Build Include="ExperienciaCandidato.sql" />
+    <Build Include="InformacaoCandidato.sql" />
   </ItemGroup>
 </Project>
