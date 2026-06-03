@@ -8,11 +8,11 @@ using Model.Request;
 using Model.Response;
 using Repositories;
 using Services.Interfaces;
-using System.Runtime.CompilerServices;
 
 namespace Services;
 
-public class CandidatoService(CandidatoRepository _candidatoRepository, InformacaoCandidatoRepository _informacaoCandidatoRepository, ExperienciaCandidatoRepository _experienciaCandidatoRepository, CandidatoVagaRepository _candidatoVagaRepository, VagaRepository _vagaRepository) : ICandidatoService
+public class CandidatoService(CandidatoRepository _candidatoRepository, InformacaoCandidatoRepository _informacaoCandidatoRepository,
+    ExperienciaCandidatoRepository _experienciaCandidatoRepository, CandidatoVagaRepository _candidatoVagaRepository, VagaRepository _vagaRepository) : ICandidatoService
 {
     private readonly string _bucketName = "s3-bucket-techjobs";
     private readonly string _folder = "cv";
@@ -67,16 +67,69 @@ public class CandidatoService(CandidatoRepository _candidatoRepository, Informac
 
     public IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario) => _candidatoVagaRepository.ObterAplicacoesPorCandidato(idUsuario);
 
-    public DashboardCandidatoResponse ObterDadosDashboard(int idUsuario)
+    public InformacoesCandidatoResponse ObterInformacoesPorUsuario(int idUsuario)
     {
-        int vagas = _vagaRepository.ObterVagasDisponiveis();
+        var informacoes = _informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
+        var dadosVagas = _candidatoVagaRepository.ObterDadosDashboard(idUsuario);
+        var experiencias = _experienciaCandidatoRepository.ObterExperienciasCandidato(idUsuario);
 
-        var dados = _candidatoVagaRepository.ObterDadosDashboard(idUsuario);
-        dados.VagasDisponiveis = vagas;
-
-        return dados;
+        return new(informacoes, dadosVagas, experiencias);
     }
 
-    public IEnumerable<ExperienciaCandidatoDTO> ObterExperienciasCandidato(int idUsuario) => _experienciaCandidatoRepository.ObterExperienciasCandidato(idUsuario);
-    public InformacaoCandidato? ObterInformacoesPorUsuario(int idUsuario) => _informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
+    public void AtualizarInformacoesCandidato(int idUsuario, AtualizarInformacoesCandidatoRequest request)
+    {
+        var candidato = _candidatoRepository.ObterCandidatoPorIdUsuario(idUsuario);
+
+        var informacao = _informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
+
+        if (informacao != null)
+        {
+            informacao.Descricao = request.Descricao;
+            informacao.Habilidades = request.Habilidades;
+            informacao.EmailPessoal = request.EmailPessoal;
+            informacao.EmailCorporativo = request.EmailCorporativo;
+            informacao.Telefone = request.Telefone;
+            informacao.Linkedin = request.Linkedin;
+            informacao.Github = request.Github;
+            informacao.Preferencias = request.Preferencias;
+            informacao.Cidade = request.Cidade;
+            informacao.Estado = request.Estado;
+            informacao.AnosExperiencia = request.AnosExperiencia;
+            informacao.Area = request.Area;
+
+            _informacaoCandidatoRepository.Editar(informacao);
+        }
+        else
+        {
+            _informacaoCandidatoRepository.Adicionar(new InformacaoCandidato
+            {
+                IdCandidato = candidato.Id,
+                Descricao = request.Descricao,
+                Habilidades = request.Habilidades,
+                EmailPessoal = request.EmailPessoal,
+                EmailCorporativo = request.EmailCorporativo,
+                Telefone = request.Telefone,
+                Linkedin = request.Linkedin,
+                Github = request.Github
+            });
+        }
+
+
+        //if (request.Experiencias != null && request.Experiencias.Any())
+        //{
+        //    _experienciaCandidatoRepository.Excluir(idUsuario);
+        //    foreach (var exp in request.Experiencias)
+        //    {
+        //        _experienciaCandidatoRepository.Adicionar(new ExperienciaCandidato
+        //        {
+        //            IdUsuario = idUsuario,
+        //            TipoExperiencia = exp.TipoExperiencia,
+        //            Instituicao = exp.Instituicao,
+        //            Descricao = exp.Descricao,
+        //            DataInicio = exp.DataInicio,
+        //            DataFim = exp.DataFim
+        //        });
+        //    }
+        //}
+    }
 }

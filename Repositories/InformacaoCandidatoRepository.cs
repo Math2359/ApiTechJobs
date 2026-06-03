@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Repositories
 {
-    public class InformacaoCandidatoRepository(IConfiguration configuration): GenericRepository<InformacaoCandidato>(configuration)
+    public class InformacaoCandidatoRepository(IConfiguration configuration) : GenericRepository<InformacaoCandidato>(configuration)
     {
         public InformacaoCandidato? ObterInformacoesPorUsuario(int idUsuario)
         {
@@ -24,6 +24,26 @@ namespace Repositories
                                         WHERE C.IdUsuario = @idUsuario;";
 
             return conexao.QuerySingleOrDefault<InformacaoCandidato>(sqlCommand, new { idUsuario });
+        }
+
+        public override void Editar(InformacaoCandidato obj)
+        {
+            using var conexao = CriarConexao();
+            const string sqlCommand = @"UPDATE InformacaoCandidato
+                            SET Linkedin = @Linkedin,
+                                Github = @Github,
+                                Habilidades = @Habilidades,
+                                Descricao = @Descricao,
+                                EmailPessoal = @EmailPessoal,
+                                EmailCorporativo = @EmailCorporativo,
+                                Telefone = @Telefone,
+                                Preferencias = @Preferencias,
+                                Cidade = @Cidade,
+                                Estado = @Estado,
+                                AnosExperiencia = @AnosExperiencia,
+                                Area = @Area
+                            WHERE IdCandidato = @IdCandidato;";
+            conexao.Execute(sqlCommand, obj);
         }
     }
 }

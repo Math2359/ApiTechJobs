@@ -12,6 +12,7 @@ namespace Api.Controllers
     [Route("candidato")]
     [ApiController]
     [ProducesErrorResponseType(typeof(ErroResponse))]
+    [AutorizarPerfis(EnumPerfil.Candidato)]
     public class CandidatoController(ICandidatoService candidatoService) : ControllerBase
     {
         private readonly ICandidatoService _candidatoService = candidatoService;
@@ -37,28 +38,20 @@ namespace Api.Controllers
             return Ok(aplicacoes);
         }
 
-        [HttpGet("dashboard")]
-        public IActionResult ObterDadosDashboard()
-        {
-            var dados = _candidatoService.ObterDadosDashboard(User.ObterId());
-
-            return Ok(dados);
-        }
-
-        [HttpGet("experiencias")]
-        public IActionResult ObterExperienciasCandidato()
-        {
-            var experiencias = _candidatoService.ObterExperienciasCandidato(User.ObterId());
-
-            return Ok(experiencias);
-        }
-
         [HttpGet("informacoes")]
         public IActionResult ObterInformacoesPorUsuario()
         {
             var informacoes = _candidatoService.ObterInformacoesPorUsuario(User.ObterId());
 
             return Ok(informacoes);
+        }
+
+        [HttpPut("informacoes")]
+        public IActionResult AtualizarInformacoes([FromBody] AtualizarInformacoesCandidatoRequest request)
+        {
+            _candidatoService.AtualizarInformacoesCandidato(User.ObterId(), request);
+
+            return NoContent();
         }
     }
 }

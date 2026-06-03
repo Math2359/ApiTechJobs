@@ -1,17 +1,14 @@
-﻿using Model.Attributes;
+﻿using Model.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Model
+namespace Model.Request
 {
-    public class InformacaoCandidato
+    public class AtualizarInformacoesCandidatoRequest
     {
-        [IgnorarInsert]
-        public int Id { get; set; }
-        public int IdCandidato { get; set; }
         public string? Descricao { get; set; }
         public string? Habilidades { get; set; }
         public string? EmailPessoal { get; set; }
@@ -24,5 +21,6 @@ namespace Model
         public string? Estado { get; set; }
         public int? AnosExperiencia { get; set; }
         public string? Area { get; set; }
+        public IList<ExperienciaCandidatoDTO>? Experiencias { get; set; }
     }
 }

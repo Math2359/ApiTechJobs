@@ -53,19 +53,19 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
         return [.. conexao.Query<AplicacaoCandidatoResponse>(sqlCommand, new { idUsuario })];
     }
 
-    public DashboardCandidatoResponse ObterDadosDashboard(int idUsuario)
+    public DadosVagasCandidatoDTO ObterDadosDashboard(int idUsuario)
     {
         using var conexao = CriarConexao();
 
         const string sqlCommand = @"SELECT 
-                                        COUNT(*) AS VagasAplicadas,
+                                        COUNT(CV.Id) AS VagasAplicadas,
                                         COUNT(CASE WHEN Situacao = 1 THEN 1 END) AS ProcessosAtivos
                                     FROM Candidato AS C
                                     LEFT JOIN CandidatoVaga AS CV
                                     ON CV.IdCandidato = C.Id
                                     WHERE IdUsuario = @idUsuario";
 
-        return conexao.QuerySingle<DashboardCandidatoResponse>(sqlCommand, new { idUsuario });
+        return conexao.QuerySingle<DadosVagasCandidatoDTO>(sqlCommand, new { idUsuario });
     }
 
     public DashboardEmpresaResponse ObterDadosDashboardEmpresa(int idUsuario)

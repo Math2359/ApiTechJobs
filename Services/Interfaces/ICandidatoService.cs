@@ -15,7 +15,6 @@ public interface ICandidatoService
     void Adicionar(Candidato candidato);
     Task AplicarVaga(AplicarVagaRequest aplicarVaga);
     IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario);
-    DashboardCandidatoResponse ObterDadosDashboard(int idUsuario);
-    IEnumerable<ExperienciaCandidatoDTO> ObterExperienciasCandidato(int idUsuario);
-    InformacaoCandidato? ObterInformacoesPorUsuario(int idUsuario);
+    InformacoesCandidatoResponse ObterInformacoesPorUsuario(int idUsuario);
+    void AtualizarInformacoesCandidato(int idUsuario, AtualizarInformacoesCandidatoRequest request);
 }
