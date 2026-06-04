@@ -8,6 +8,8 @@ namespace Repositories.Generico;
 
 public class GenericRepository<T>(IConfiguration configuration) : IGenericRepository<T>
 {
+    public static string? OutputColumn { get; set; } = null;
+
     private readonly string _connectionString = configuration.GetConnectionString("TechJobs") ?? "";
 
     private readonly string obterPorIdQuery = $"SELECT * FROM [{typeof(T).Name}] WHERE Id = @id";
@@ -16,7 +18,7 @@ public class GenericRepository<T>(IConfiguration configuration) : IGenericReposi
 
     private readonly string deleteQuery = $"DELETE FROM [{typeof(T).Name}] WHERE Id = @id";
 
-    private readonly string insertQuery = SqlHelper.GerarInsertQuery<T>();
+    private readonly string insertQuery = SqlHelper.GerarInsertQuery<T>(OutputColumn);
 
     protected SqlConnection CriarConexao() => new(_connectionString);
 

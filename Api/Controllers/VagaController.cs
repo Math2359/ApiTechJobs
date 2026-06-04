@@ -49,11 +49,11 @@ namespace Api.Controllers
         /// <returns>Lista de vagas</returns>
         [AutorizarPerfis(EnumPerfil.Empresa)]
         [HttpGet("url-cv-aplicacao/{id}")]
-        public IActionResult GerarUrlAssinada(int id)
+        public async Task<IActionResult> GerarUrlAssinada(int id)
         {
-            var vagas = _vagaService.GerarUrlAssinada(id);
+            var url = await _vagaService.GerarUrlAssinada(id);
 
-            return Ok(vagas);
+            return Ok(url);
         }
 
         /// <summary>

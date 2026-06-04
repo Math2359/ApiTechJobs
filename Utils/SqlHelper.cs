@@ -21,7 +21,7 @@ public static class SqlHelper
     /// <param name="outputColumn">O nome da coluna que será retornada após a operação de inserção. O valor padrão é "Id".</param>
     /// <returns>Uma string contendo a consulta SQL INSERT para o tipo especificado <typeparamref name="T"/>, com a coluna de saída indicada.</returns>
 
-    public static string GerarInsertQuery<T>(string outputColumn = "Id")
+    public static string GerarInsertQuery<T>(string? outputColumn = "Id")
     {
         Type type = typeof(T);
 
@@ -29,7 +29,6 @@ public static class SqlHelper
 
         var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .Where(p => p.GetCustomAttribute<IgnorarInsert>() == null)
-            .Where(p => !string.Equals(p.Name, outputColumn, StringComparison.OrdinalIgnoreCase))
             .ToArray();
 
         var columns = string.Join(", ", properties.Select(p => p.Name));

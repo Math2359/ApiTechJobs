@@ -4,5 +4,6 @@
     Perfil INT NOT NULL,
     Login VARCHAR(150) NOT NULL,
     Senha VARCHAR(255) NOT NULL,
-    DataCadastro DATETIME NOT NULL DEFAULT GETDATE()
+    DataCadastro DATETIME NOT NULL DEFAULT GETDATE(),
+    ChaveFotoPerfil VARCHAR(200) NULL
 );

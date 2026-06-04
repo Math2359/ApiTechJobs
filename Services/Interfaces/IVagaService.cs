@@ -16,5 +16,5 @@ public interface IVagaService
     IList<VagaCandidatoResponse> ObterTodas(ObterTodasVagasRequest request);
     bool ValidarVagaEmpresa(int idVaga, int idUsuarioEmpresa);
     VagaEmpresaResponse ObterVagaEmpresaPorId(int id);
-    string GerarUrlAssinada(int id);
+    Task<string> GerarUrlAssinada(int id);
 }

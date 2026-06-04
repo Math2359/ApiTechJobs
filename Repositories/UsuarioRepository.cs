@@ -40,4 +40,13 @@ public class UsuarioRepository(IConfiguration configuration) : GenericRepository
             new { login, documento }
         );
     }
+
+    public void AtualizarChaveArquivo(int idUsuario, string chave)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"UPDATE Usuario SET ChaveFotoPerfil = @chave WHERE Id = @idUsuario";
+
+        conexao.Execute(sqlCommand, new { idUsuario, chave });
+    }
 }

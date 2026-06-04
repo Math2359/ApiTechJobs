@@ -3,6 +3,8 @@ using Repositories.Generico;
 using Repositories.Generico.Interface;
 using Services;
 using Services.Interfaces;
+using Services.Utils;
+using Services.Utils.Interface;
 
 namespace Api.Configuration;
 
@@ -38,6 +40,7 @@ public static class DependencyInjection
         servicos.AddScoped<ICandidatoService, CandidatoService>();
         servicos.AddScoped<IEmpresaService, EmpresaService>();
         servicos.AddScoped<IVagaService, VagaService>();
+        servicos.AddScoped<IAwsService, AwsService>();
         #endregion
 
         return servicos;

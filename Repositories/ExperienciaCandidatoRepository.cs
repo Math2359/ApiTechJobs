@@ -13,6 +13,11 @@ namespace Repositories
 {
     public class ExperienciaCandidatoRepository(IConfiguration configuration): GenericRepository<ExperienciaCandidato>(configuration)
     {
+        static ExperienciaCandidatoRepository()
+        {
+            OutputColumn = "IdCandidato";
+        }
+
         public IEnumerable<ExperienciaCandidatoDTO> ObterExperienciasCandidato(int idUsuario)
         {
             using var conexao = CriarConexao();
@@ -24,6 +29,15 @@ namespace Repositories
                                     ORDER BY TipoExperiencia, DataInicio DESC";
 
             return conexao.Query<ExperienciaCandidatoDTO>(sqlCommand, new { idUsuario });
+        }
+
+        public override void Excluir(int idCandidato)
+        {
+            using var conexao = CriarConexao();
+
+            const string sqlCommand = "DELETE FROM ExperienciaCandidato WHERE IdCandidato = @idCandidato";
+
+            conexao.Execute(sqlCommand, new { idCandidato });
         }
     }
 }

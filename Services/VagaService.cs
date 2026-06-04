@@ -5,6 +5,7 @@ using Model.Request;
 using Model.Response;
 using Repositories;
 using Services.Interfaces;
+using Services.Utils.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Services;
 
-public class VagaService(VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository) : IVagaService
+public class VagaService(VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository, IAwsService awsService) : IVagaService
 {
     private readonly VagaRepository _vagaRepository = vagaRepository;
     private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
@@ -41,20 +42,10 @@ public class VagaService(VagaRepository vagaRepository, CandidatoVagaRepository 
         };
     }
 
-    public string GerarUrlAssinada(int id)
+    public async Task<string> GerarUrlAssinada(int id)
     {
         var aplicacao = _candidatoVagaRepository.ObterPorId(id);
 
-        var s3client = new AmazonS3Client();
-
-        var request = new GetPreSignedUrlRequest
-        {
-            BucketName = _bucketName,
-            Key = aplicacao.FileKey,
-            Expires = DateTime.UtcNow.AddMinutes(15),
-        };
-
-        // Gera a URL
-        return s3client.GetPreSignedURL(request);
+        return await awsService.PreSignedURL(aplicacao.FileKey);
     }
 }

@@ -10,8 +10,6 @@ namespace Model
 {
     public class ExperienciaCandidato
     {
-        [IgnorarInsert]
-        public int Id { get; set; }
         public int IdCandidato { get; set; }
         public EnumTipoExperiencia TipoExperiencia { get; set; }
         public string Instituicao { get; set; } = string.Empty;

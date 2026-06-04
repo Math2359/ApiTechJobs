@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Api.Helper;
+using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using Model.Request;
 using Model.Response;
 using Services.Interfaces;
@@ -45,6 +47,36 @@ namespace Api.Controllers
             {
                 var token = _usuarioService.LogarUsuario(request);
                 return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        [HttpPut("foto-perfil")]
+        public async Task<IActionResult> EditarFotoPerfil(IFormFile file)
+        {
+            try
+            {
+                await _usuarioService.EditarFotoPerfil(User.ObterId(), file);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        [HttpGet("foto-perfil")]
+        public async Task<IActionResult> ObterFotoPerfil()
+        {
+            try
+            {
+                var url = await _usuarioService.GerarUrlAssinadaFotoPerfil(User.ObterId());
+
+                return Ok(url);
             }
             catch (Exception ex)
             {
