@@ -1,4 +1,5 @@
 ﻿using Model.Attributes;
+using Model.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,21 @@ namespace Model
         public string? Estado { get; set; }
         public int? AnosExperiencia { get; set; }
         public string? Area { get; set; }
+
+        public void AtualizarModel(AtualizarInformacoesCandidatoRequest request)
+        {
+            Descricao = request.Descricao ?? Descricao;
+            Habilidades = request.Habilidades ?? Habilidades;
+            EmailPessoal = request.EmailPessoal ?? EmailPessoal;
+            EmailCorporativo = request.EmailCorporativo ?? EmailCorporativo;
+            Telefone = request.Telefone ?? Telefone;
+            Linkedin = request.Linkedin ?? Linkedin;
+            Github = request.Github ?? Github;
+            Preferencias = request.Preferencias ?? Preferencias;
+            Cidade = request.Cidade ?? Cidade;
+            Estado = request.Estado ?? Estado;
+            AnosExperiencia = request.AnosExperiencia ?? AnosExperiencia;
+            Area = request.Area ?? Area;
+        }
     }
 }

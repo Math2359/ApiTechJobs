@@ -29,6 +29,7 @@ namespace Repositories
         public override void Editar(InformacaoCandidato obj)
         {
             using var conexao = CriarConexao();
+
             const string sqlCommand = @"UPDATE InformacaoCandidato
                             SET Linkedin = @Linkedin,
                                 Github = @Github,
@@ -43,6 +44,7 @@ namespace Repositories
                                 AnosExperiencia = @AnosExperiencia,
                                 Area = @Area
                             WHERE IdCandidato = @IdCandidato;";
+
             conexao.Execute(sqlCommand, obj);
         }
     }

@@ -17,5 +17,6 @@ public interface IEmpresaService
     int AdicionarVaga(int idUsuario, AdicionarVagaRequest novaVaga);
     IList<VagaResponse> ObterVagas(int idUsuario);
     void RetornarResultado(int idAplicacao, EnumSituacao situacao);
-    DashboardEmpresaResponse ObterDadosDashboard(int idUsuario);
+    InformacoesEmpresaResponse ObterInformacoesPorUsuario(int idUsuario);
+    void AtualizarInformacoesEmpresa(int idusuario, AtualizarInformacoesEmpresaRequest request);
 }

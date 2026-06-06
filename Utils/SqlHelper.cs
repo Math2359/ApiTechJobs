@@ -20,8 +20,7 @@ public static class SqlHelper
     /// <typeparam name="T">O tipo que representa a tabela para a qual a consulta INSERT será gerada.</typeparam>
     /// <param name="outputColumn">O nome da coluna que será retornada após a operação de inserção. O valor padrão é "Id".</param>
     /// <returns>Uma string contendo a consulta SQL INSERT para o tipo especificado <typeparamref name="T"/>, com a coluna de saída indicada.</returns>
-
-    public static string GerarInsertQuery<T>(string? outputColumn = "Id")
+    public static string GerarInsertQuery<T>(string? outputColumn)
     {
         Type type = typeof(T);
 
@@ -35,7 +34,7 @@ public static class SqlHelper
         var parameters = string.Join(", ", properties.Select(p => "@" + p.Name));
 
         string query = $@"INSERT INTO {tableName} ({columns})
-                          OUTPUT INSERTED.{outputColumn}
+                          OUTPUT INSERTED.{outputColumn ?? "Id"}
                           VALUES ({parameters});";
 
         return query;

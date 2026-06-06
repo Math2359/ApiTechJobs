@@ -68,7 +68,7 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
         return conexao.QuerySingle<DadosVagasCandidatoDTO>(sqlCommand, new { idUsuario });
     }
 
-    public DashboardEmpresaResponse ObterDadosDashboardEmpresa(int idUsuario)
+    public DadosVagasEmpresaDTO ObterDadosDashboardEmpresa(int idUsuario)
     {
         using var conexao = CriarConexao();
 
@@ -82,6 +82,6 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
                                     ON E.Id = V.IdEmpresa
                                     WHERE IdUsuario = @idUsuario";
 
-        return conexao.QuerySingle<DashboardEmpresaResponse>(sqlCommand, new { idUsuario });
+        return conexao.QuerySingle<DadosVagasEmpresaDTO>(sqlCommand, new { idUsuario });
     }
 }

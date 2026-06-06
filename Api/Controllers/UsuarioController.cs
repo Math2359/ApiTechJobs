@@ -73,6 +73,22 @@ namespace Api.Controllers
         }
 
         [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpDelete("foto-perfil")]
+        public async Task<IActionResult> DeletarFotoPerfil()
+        {
+            try
+            {
+                await _usuarioService.DeletarFotoPerfil(User.ObterId());
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
         [HttpGet("foto-perfil")]
         public async Task<IActionResult> ObterFotoPerfil()
         {

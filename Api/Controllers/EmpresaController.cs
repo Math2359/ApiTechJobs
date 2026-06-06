@@ -19,8 +19,6 @@ namespace Api.Controllers
     [AutorizarPerfis(EnumPerfil.Empresa)]
     public class EmpresaController(IEmpresaService empresaService) : ControllerBase
     {
-        private readonly IEmpresaService _empresaService = empresaService;
-
         /// <summary>
         /// Obtém os dados da empresa logada
         /// </summary>
@@ -31,7 +29,7 @@ namespace Api.Controllers
         {
             try
             {
-                var empresa = _empresaService.ObterEmpresaPorIdUsuario(User.ObterId());
+                var empresa = empresaService.ObterEmpresaPorIdUsuario(User.ObterId());
 
                 return Ok(empresa);
             }
@@ -44,17 +42,25 @@ namespace Api.Controllers
         [HttpPost("aplicacao-vaga/{idAplicacao}/{situacao}")]
         public IActionResult RetornarResultado([FromRoute] int idAplicacao, [FromRoute] EnumSituacao situacao)
         {
-            _empresaService.RetornarResultado(idAplicacao, situacao);
+            empresaService.RetornarResultado(idAplicacao, situacao);
 
             return NoContent();
         }
 
-        [HttpGet("dashboard")]
-        public IActionResult ObterDadosDashboard()
+        [HttpGet("informacoes")]
+        public IActionResult ObterInformacoesPorUsuario()
         {
-            var dados = _empresaService.ObterDadosDashboard(User.ObterId());
+            var informacoes = empresaService.ObterInformacoesPorUsuario(User.ObterId());
 
-            return Ok(dados);
+            return Ok(informacoes);
+        }
+
+        [HttpPut("informacoes")]
+        public IActionResult AtualizarInformacoes([FromBody] AtualizarInformacoesEmpresaRequest request)
+        {
+            empresaService.AtualizarInformacoesEmpresa(User.ObterId(), request);
+
+            return NoContent();
         }
     }
 }

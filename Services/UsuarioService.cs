@@ -96,6 +96,18 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
         _usuarioRepository.AtualizarChaveArquivo(idUsuario, fileKey);
     }
 
+    public async Task DeletarFotoPerfil(int idUsuario)
+    {
+        var usuario = _usuarioRepository.ObterPorId(idUsuario);
+
+        if (!string.IsNullOrWhiteSpace(usuario?.ChaveFotoPerfil))
+        {
+            await awsService.RemoveFileAsync(usuario.ChaveFotoPerfil);
+
+            _usuarioRepository.AtualizarChaveArquivo(idUsuario, null);
+        }
+    }
+
     public async Task<string?> GerarUrlAssinadaFotoPerfil(int idUsuario)
     {
         var usuario = _usuarioRepository.ObterPorId(idUsuario);

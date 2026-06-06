@@ -12,21 +12,21 @@ using Services.Utils.Interface;
 
 namespace Services;
 
-public class CandidatoService(CandidatoRepository _candidatoRepository, InformacaoCandidatoRepository _informacaoCandidatoRepository,
-    ExperienciaCandidatoRepository _experienciaCandidatoRepository, CandidatoVagaRepository _candidatoVagaRepository, IAwsService _awsService) : ICandidatoService
+public class CandidatoService(CandidatoRepository candidatoRepository, InformacaoCandidatoRepository informacaoCandidatoRepository,
+    ExperienciaCandidatoRepository experienciaCandidatoRepository, CandidatoVagaRepository candidatoVagaRepository, IAwsService awsService) : ICandidatoService
 {
     private readonly string _folder = "cv";
 
-    public void Adicionar(Candidato candidato) => _candidatoRepository.Adicionar(candidato);
+    public void Adicionar(Candidato candidato) => candidatoRepository.Adicionar(candidato);
 
 
     public async Task AplicarVaga(AplicarVagaRequest aplicarVaga)
     {
-        var candidato = _candidatoRepository.ObterCandidatoPorIdUsuario(aplicarVaga.IdUsuario);
+        var candidato = candidatoRepository.ObterCandidatoPorIdUsuario(aplicarVaga.IdUsuario);
 
-        string fileKey = await _awsService.UploadFileAsync(aplicarVaga.IFile, _folder);
+        string fileKey = await awsService.UploadFileAsync(aplicarVaga.IFile, _folder);
 
-        _candidatoVagaRepository.Adicionar(new CandidatoVaga
+        candidatoVagaRepository.Adicionar(new CandidatoVaga
         {
             FileKey = fileKey,
             IdCandidato = candidato.Id,
@@ -35,43 +35,32 @@ public class CandidatoService(CandidatoRepository _candidatoRepository, Informac
         });
     }
 
-    public IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario) => _candidatoVagaRepository.ObterAplicacoesPorCandidato(idUsuario);
+    public IList<AplicacaoCandidatoResponse> ObterAplicacoes(int idUsuario) => candidatoVagaRepository.ObterAplicacoesPorCandidato(idUsuario);
 
     public InformacoesCandidatoResponse ObterInformacoesPorUsuario(int idUsuario)
     {
-        var informacoes = _informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
-        var dadosVagas = _candidatoVagaRepository.ObterDadosDashboard(idUsuario);
-        var experiencias = _experienciaCandidatoRepository.ObterExperienciasCandidato(idUsuario);
+        var informacoes = informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
+        var dadosVagas = candidatoVagaRepository.ObterDadosDashboard(idUsuario);
+        var experiencias = experienciaCandidatoRepository.ObterExperienciasCandidato(idUsuario);
 
         return new(informacoes, dadosVagas, experiencias);
     }
 
     public void AtualizarInformacoesCandidato(int idUsuario, AtualizarInformacoesCandidatoRequest request)
     {
-        var candidato = _candidatoRepository.ObterCandidatoPorIdUsuario(idUsuario);
+        var candidato = candidatoRepository.ObterCandidatoPorIdUsuario(idUsuario);
 
-        var informacao = _informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
+        var informacao = informacaoCandidatoRepository.ObterInformacoesPorUsuario(idUsuario);
 
         if (informacao != null)
         {
-            informacao.Descricao = request.Descricao;
-            informacao.Habilidades = request.Habilidades;
-            informacao.EmailPessoal = request.EmailPessoal;
-            informacao.EmailCorporativo = request.EmailCorporativo;
-            informacao.Telefone = request.Telefone;
-            informacao.Linkedin = request.Linkedin;
-            informacao.Github = request.Github;
-            informacao.Preferencias = request.Preferencias;
-            informacao.Cidade = request.Cidade;
-            informacao.Estado = request.Estado;
-            informacao.AnosExperiencia = request.AnosExperiencia;
-            informacao.Area = request.Area;
+            informacao.AtualizarModel(request);
 
-            _informacaoCandidatoRepository.Editar(informacao);
+            informacaoCandidatoRepository.Editar(informacao);
         }
         else
         {
-            _informacaoCandidatoRepository.Adicionar(new InformacaoCandidato
+            informacaoCandidatoRepository.Adicionar(new InformacaoCandidato
             {
                 IdCandidato = candidato.Id,
                 Descricao = request.Descricao,
@@ -80,18 +69,23 @@ public class CandidatoService(CandidatoRepository _candidatoRepository, Informac
                 EmailCorporativo = request.EmailCorporativo,
                 Telefone = request.Telefone,
                 Linkedin = request.Linkedin,
-                Github = request.Github
+                Github = request.Github,
+                Area = request.Area,
+                AnosExperiencia = request.AnosExperiencia,
+                Cidade = request.Cidade,
+                Estado = request.Estado,
+                Preferencias = request.Preferencias,
             });
         }
 
 
         if (request.Experiencias?.Count > 0)
         {
-            _experienciaCandidatoRepository.Excluir(idUsuario);
+            experienciaCandidatoRepository.Excluir(idUsuario);
 
             foreach (var exp in request.Experiencias)
             {
-                _experienciaCandidatoRepository.Adicionar(new ExperienciaCandidato
+                experienciaCandidatoRepository.Adicionar(new ExperienciaCandidato
                 {
                     IdCandidato = candidato.Id,
                     TipoExperiencia = exp.TipoExperiencia,

@@ -10,5 +10,6 @@ public interface IUsuarioService
     void NovoUsuario(NovoUsuarioRequest novoUsuario);
     LogarUsuarioResponse LogarUsuario(LogarUsuarioRequest logarUsuario);
     Task EditarFotoPerfil(int idUsuario, IFormFile file);
+    Task DeletarFotoPerfil(int idUsuario);
     Task<string?> GerarUrlAssinadaFotoPerfil(int idUsuario);
 }

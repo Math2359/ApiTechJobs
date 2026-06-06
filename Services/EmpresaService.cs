@@ -7,19 +7,15 @@ using Services.Interfaces;
 
 namespace Services;
 
-public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository) : IEmpresaService
+public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository, InformacaoEmpresaRepository informacaoEmpresaRepository) : IEmpresaService
 {
-    private readonly EmpresaRepository _empresaRepository = empresaRepository;
-    private readonly VagaRepository _vagaRepository = vagaRepository;
-    private readonly CandidatoVagaRepository _candidatoVagaRepository = candidatoVagaRepository;
+    public int Adicionar(Empresa empresa) => empresaRepository.Adicionar(empresa);
 
-    public int Adicionar(Empresa empresa) => _empresaRepository.Adicionar(empresa);
-
-    public Empresa ObterEmpresaPorIdUsuario(int idUsuario) => _empresaRepository.ObterEmpresaPorIdUsuario(idUsuario);
+    public Empresa ObterEmpresaPorIdUsuario(int idUsuario) => empresaRepository.ObterEmpresaPorIdUsuario(idUsuario);
 
     public int AdicionarVaga(int idUsuario, AdicionarVagaRequest novaVaga)
     {
-        var empresa = _empresaRepository.ObterEmpresaPorIdUsuario(idUsuario);
+        var empresa = empresaRepository.ObterEmpresaPorIdUsuario(idUsuario);
 
         var vaga = new Vaga
         {
@@ -37,24 +33,48 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
             SalarioPrevisto = novaVaga.SalarioPrevisto
         };
 
-        return _vagaRepository.Adicionar(vaga);
+        return vagaRepository.Adicionar(vaga);
     }
 
-    public IList<VagaResponse> ObterVagas(int idUsuario) => _vagaRepository.ObterVagasPorIdUsuarioEmpresa(idUsuario);
+    public IList<VagaResponse> ObterVagas(int idUsuario) => vagaRepository.ObterVagasPorIdUsuarioEmpresa(idUsuario);
 
-    public void RetornarResultado(int idAplicacao, EnumSituacao situacao) => _candidatoVagaRepository.Editar(new CandidatoVaga
+    public void RetornarResultado(int idAplicacao, EnumSituacao situacao) => candidatoVagaRepository.Editar(new CandidatoVaga
     {
         Id = idAplicacao,
         Situacao = situacao,
     });
 
-    public DashboardEmpresaResponse ObterDadosDashboard(int idUsuario)
+    public InformacoesEmpresaResponse ObterInformacoesPorUsuario(int idUsuario)
     {
-        int vagas = _vagaRepository.ObterVagasDisponiveis(idUsuario);
+        var informacoes = informacaoEmpresaRepository.ObterInformacoesPorUsuario(idUsuario);
+        var vagasDisponiveis = vagaRepository.ObterVagasDisponiveis(idUsuario);
+        var dadosVagasEmpresa = candidatoVagaRepository.ObterDadosDashboardEmpresa(idUsuario);
 
-        var dados = _candidatoVagaRepository.ObterDadosDashboardEmpresa(idUsuario);
-        dados.VagasDisponiveis = vagas;
+        return new(informacoes, vagasDisponiveis, dadosVagasEmpresa.Candidatos);
+    }
 
-        return dados;
+    public void AtualizarInformacoesEmpresa(int idUsuario, AtualizarInformacoesEmpresaRequest request)
+    {
+        var empresa = empresaRepository.ObterEmpresaPorIdUsuario(idUsuario);
+
+        var informacao = informacaoEmpresaRepository.ObterInformacoesPorUsuario(idUsuario);
+
+        if (informacao != null)
+        {
+            informacao.AtualizarModel(request);
+
+            informacaoEmpresaRepository.Editar(informacao);
+        }
+        else
+        {
+            informacaoEmpresaRepository.Adicionar(new InformacaoEmpresa
+            {
+                IdEmpresa = empresa.Id,
+                Descricao = request.Descricao,
+                LinkSite = request.LinkSite,
+                Setor = request.Setor,
+                Tecnologias = request.Tecnologias,
+            });
+        }
     }
 }

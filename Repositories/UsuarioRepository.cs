@@ -41,7 +41,7 @@ public class UsuarioRepository(IConfiguration configuration) : GenericRepository
         );
     }
 
-    public void AtualizarChaveArquivo(int idUsuario, string chave)
+    public void AtualizarChaveArquivo(int idUsuario, string? chave)
     {
         using var conexao = CriarConexao();
 
