@@ -12,5 +12,6 @@ namespace Services.Utils.Interface
         Task<string> UploadFileAsync(IFormFile file, string folder);
         Task RemoveFileAsync(string fileKey);
         Task<string> PreSignedURL(string fileKey);
+        Task SendEmailTemplate(string destinatario, string template, object templateData);
     }
 }

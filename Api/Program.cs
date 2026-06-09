@@ -1,4 +1,5 @@
 using Api.Configuration;
+using Model.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.ConfigurarServicos();
+builder.Services.Configure<EmailValidationSettings>(
+    builder.Configuration.GetSection(nameof(EmailValidationSettings)));
 builder.RegistrarAutenticaco();
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);

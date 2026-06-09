@@ -9,4 +9,5 @@ public class CredenciaisUsuarioDTO
     public string Senha { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Nome { get; set; } = string.Empty;
+    public bool EmailValidado { get; set; }
 }

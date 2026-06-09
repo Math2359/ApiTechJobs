@@ -9,6 +9,8 @@ using Model.Response;
 using Repositories;
 using Services.Interfaces;
 using Services.Utils.Interface;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Utils;
 
 namespace Services;
@@ -27,7 +29,7 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Informaca
 
         string fileKey = await awsService.UploadFileAsync(aplicarVaga.IFile, _folder);
 
-        candidatoVagaRepository.Adicionar(new CandidatoVaga
+        var idAlicacao = candidatoVagaRepository.Adicionar(new CandidatoVaga
         {
             FileKey = fileKey,
             IdCandidato = candidato.Id,
@@ -44,7 +46,11 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Informaca
         {
             DataCadastro = HorarioBrasilia.DataAtual,
             IdUsuario = empresa.IdUsuario,
-            IdAcao = vaga.Id,
+            PropsAdicionais = JsonSerializer.Serialize(new
+            {
+                idVaga = vaga.Id,
+                idAplicacao = idAlicacao
+            }),
             Lida = false,
             Titulo = "Nova aplicação!",
             Tipo = EnumTipoNotificacao.Aplicacao,

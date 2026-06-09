@@ -7,8 +7,10 @@ namespace Services.Interfaces;
 
 public interface IUsuarioService
 {
-    void NovoUsuario(NovoUsuarioRequest novoUsuario);
+    Task NovoUsuario(NovoUsuarioRequest novoUsuario);
     LogarUsuarioResponse LogarUsuario(LogarUsuarioRequest logarUsuario);
+    Task GerarValidacaoEmail(int idUsuario);
+    void ValidarEmail(string codigo);
     Task EditarFotoPerfil(int idUsuario, IFormFile file);
     Task DeletarFotoPerfil(int idUsuario);
     Task<string?> GerarUrlAssinadaFotoPerfil(int idUsuario);
@@ -17,4 +19,5 @@ public interface IUsuarioService
     int ObterQuantidadeNotificacoesNaoLidas(int idUsuario);
     void MarcarNotificacaoComoLida(int id, int idUsuario);
     void MarcarTodasNotificacoesComoLidas(int idUsuario);
+    bool? ObterValidacaoEmail(int idUsuario);
 }

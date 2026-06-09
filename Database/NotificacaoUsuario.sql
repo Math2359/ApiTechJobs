@@ -7,7 +7,7 @@ CREATE TABLE NotificacaoUsuario
     DataCadastro DATETIME NOT NULL DEFAULT GETDATE(),
     Lida BIT NOT NULL DEFAULT 0,
 
-    [IdAcao] INT NULL, 
+    [PropsAdicionais] VARCHAR(100) NULL, 
     CONSTRAINT FK_NotificacaoUsuario_Usuario
         FOREIGN KEY (IdUsuario)
         REFERENCES Usuario(Id)

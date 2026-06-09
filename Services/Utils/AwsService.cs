@@ -1,14 +1,11 @@
-﻿using Amazon.Runtime;
-using Amazon.S3;
+﻿using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
+using Amazon.SimpleEmail;
+using Amazon.SimpleEmail.Model;
 using Microsoft.AspNetCore.Http;
 using Services.Utils.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Services.Utils
 {
@@ -73,6 +70,27 @@ namespace Services.Utils
 
             // Gera a URL
             return await s3client.GetPreSignedURLAsync(request);
+        }
+
+        public async Task SendEmailTemplate(string destinatario, string template, object templateData)
+        {
+            var sesClient = new AmazonSimpleEmailServiceClient();
+
+            var request = new SendTemplatedEmailRequest
+            {
+                Source = "contatotechjobs@gmail.com",
+                Destination = new Destination
+                {
+                    ToAddresses = new List<string>
+                    {
+                        destinatario
+                    }
+                },
+                Template = template,
+                TemplateData = JsonSerializer.Serialize(templateData)
+            };
+
+            await sesClient.SendTemplatedEmailAsync(request);
         }
     }
 }

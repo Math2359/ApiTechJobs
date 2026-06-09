@@ -22,11 +22,11 @@ namespace Api.Controllers
         /// <param name="request">Dados para criar usuário</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpPost]
-        public IActionResult NovoUsuario([FromBody] NovoUsuarioRequest request)
+        public async Task<IActionResult> NovoUsuario([FromBody] NovoUsuarioRequest request)
         {
             try
             {
-                usuarioService.NovoUsuario(request);
+                await usuarioService.NovoUsuario(request);
 
                 return NoContent();
             }
@@ -104,7 +104,6 @@ namespace Api.Controllers
         }
 
 
-
         [AutorizarPerfis(EnumPerfil.Candidato)]
         [HttpGet("foto-perfil/empresa/{idEmpresa}")]
         public async Task<IActionResult> ObterFotoPerfilEmpresa(int idEmpresa)
@@ -119,6 +118,52 @@ namespace Api.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
             }
+        }
+
+        /// <summary>
+        /// Gera e envia um novo link de validação para o e-mail do usuário autenticado
+        /// </summary>
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpPost("email/validacao")]
+        public async Task<IActionResult> GerarValidacaoEmail()
+        {
+            try
+            {
+                await usuarioService.GerarValidacaoEmail(User.ObterId());
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        /// <summary>
+        /// Valida o e-mail do usuário a partir do código enviado por e-mail
+        /// </summary>
+        [HttpGet("email/validar")]
+        public IActionResult ValidarEmail([FromQuery] string codigo)
+        {
+            try
+            {
+                usuarioService.ValidarEmail(codigo);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GerarRespostaErro());
+            }
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpGet("email/validado")]
+        public IActionResult ObterValidacaoEmail()
+        {
+            var emailValidado = usuarioService.ObterValidacaoEmail(User.ObterId());
+
+            return Ok(emailValidado);
         }
 
         [AutorizarPerfis(EnumPerfil.Empresa)]

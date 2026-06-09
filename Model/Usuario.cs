@@ -17,4 +17,5 @@ public class Usuario
     public string Senha { get; set; } = string.Empty;
     public DateTime DataCadastro { get; set; }
     public string? ChaveFotoPerfil { get; set; }
+    public bool EmailValidado { get; set; }
 }

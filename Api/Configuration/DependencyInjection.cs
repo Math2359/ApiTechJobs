@@ -34,6 +34,7 @@ public static class DependencyInjection
         servicos.AddSingleton<InformacaoCandidatoRepository>();
         servicos.AddSingleton<InformacaoEmpresaRepository>();
         servicos.AddSingleton<NotificacaoUsuarioRepository>();
+        servicos.AddSingleton<ValidacaoEmailRepository>();
         #endregion
 
         // Services

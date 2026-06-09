@@ -6,6 +6,7 @@ using Repositories;
 using Services.Interfaces;
 using Services.Utils;
 using Services.Utils.Interface;
+using System.Text.Json;
 using Utils;
 
 namespace Services;
@@ -59,7 +60,7 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
         notificacaoUsuarioRepository.Adicionar(new NotificacaoUsuario
         {
             DataCadastro = HorarioBrasilia.DataAtual,
-            IdAcao = aplicacao.IdVaga,
+            PropsAdicionais = aplicacao.IdVaga.ToString(),
             IdUsuario = candidato.IdUsuario,
             Lida = false,
             Mensagem = $"A empresa retornou o resultado da sua aplicação: {situacao.ObterDescricao()}",

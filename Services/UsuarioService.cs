@@ -11,24 +11,27 @@ using Repositories;
 using Services.Interfaces;
 using Services.Utils.Interface;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 using System.Security.Claims;
 using System.Text;
 using Utils;
 
 namespace Services;
 
-public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuarioRespository,
+public class UsuarioService(IOptions<JwtSettings> jwt, IOptions<EmailValidationSettings> emailValidationSettings, UsuarioRepository usuarioRespository,
     ICandidatoService candidatoService, IEmpresaService empresaService, CandidatoRepository candidatoRepository,
-    NotificacaoUsuarioRepository notificacaoUsuarioRepository, IAwsService awsService) : IUsuarioService
+    NotificacaoUsuarioRepository notificacaoUsuarioRepository, ValidacaoEmailRepository validacaoEmailRepository,
+    IAwsService awsService) : IUsuarioService
 {
     private readonly JwtSettings _jwt = jwt.Value;
+    private readonly EmailValidationSettings _emailValidationSettings = emailValidationSettings.Value;
     private readonly UsuarioRepository _usuarioRepository = usuarioRespository;
     private readonly ICandidatoService _candidatoService = candidatoService;
     private readonly IEmpresaService _empresaService = empresaService;
 
     private readonly string _folderProfile = "profile";
 
-    public void NovoUsuario(NovoUsuarioRequest novoUsuario)
+    public async Task NovoUsuario(NovoUsuarioRequest novoUsuario)
     {
         var usuarioExiste = _usuarioRepository.ObterPorLoginEDocumento(novoUsuario.Login, novoUsuario.Documento) is not null;
 
@@ -73,7 +76,6 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
                 _empresaService.Adicionar(empresa);
                 break;
         }
-
     }
 
     public LogarUsuarioResponse LogarUsuario(LogarUsuarioRequest logarUsuario)
@@ -83,6 +85,38 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
         if (!usuario.Senha.VerificarSenha(logarUsuario.Senha)) throw new Exception("Usuario ou senha incorretos!");
 
         return GerarToken(usuario);
+    }
+
+    public async Task GerarValidacaoEmail(int idUsuario)
+    {
+        var usuario = _usuarioRepository.ObterDadosUsuario(idUsuario)
+            ?? throw new Exception("Usuário não encontrado.");
+
+        if (usuario.EmailValidado)
+            throw new Exception("O e-mail deste usuário já foi validado.");
+
+        await EnviarValidacaoEmail(usuario.Id, usuario.Email, usuario.Nome);
+    }
+
+    public void ValidarEmail(string codigo)
+    {
+        if (string.IsNullOrWhiteSpace(codigo))
+            throw new Exception("Código de validação inválido.");
+
+        var tokenHash = GerarTokenHash(codigo);
+        var validacaoEmail = validacaoEmailRepository.ObterPorTokenHash(tokenHash)
+            ?? throw new Exception("Código de validação inválido.");
+
+        if (validacaoEmail.DataValidacao.HasValue)
+            throw new Exception("Este código de validação já foi utilizado.");
+
+        var dataValidacao = DateTime.UtcNow;
+
+        if (validacaoEmail.DataExpiracao < dataValidacao)
+            throw new Exception("Código de validação expirado.");
+
+        if (!validacaoEmailRepository.Validar(tokenHash, validacaoEmail.IdUsuario, dataValidacao))
+            throw new Exception("Código de validação inválido.");
     }
 
     public async Task EditarFotoPerfil(int idUsuario, IFormFile file)
@@ -169,4 +203,34 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
             Perfil = usuario.Perfil,
         };
     }
+
+    private async Task EnviarValidacaoEmail(int idUsuario, string email, string nome)
+    {
+        if (string.IsNullOrWhiteSpace(_emailValidationSettings.VerificationUrl))
+            throw new Exception("URL de validação de e-mail não configurada.");
+
+        var codigo = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+        var dataCriacao = DateTime.UtcNow;
+
+        validacaoEmailRepository.Adicionar(new ValidacaoEmail
+        {
+            IdUsuario = idUsuario,
+            TokenHash = GerarTokenHash(codigo),
+            DataCriacao = dataCriacao,
+            DataExpiracao = dataCriacao.AddHours(24)
+        });
+
+        var verificationLink = $"{_emailValidationSettings.VerificationUrl}?codigo={Uri.EscapeDataString(codigo)}";
+
+        await awsService.SendEmailTemplate(email, "TechJobs_ValidacaoEmail", new
+        {
+            nome,
+            verificationLink
+        });
+    }
+
+    private static string GerarTokenHash(string codigo) =>
+        Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(codigo)));
+
+    public bool? ObterValidacaoEmail(int idUsuario) => _usuarioRepository.ObterPorId(idUsuario)?.EmailValidado;
 }

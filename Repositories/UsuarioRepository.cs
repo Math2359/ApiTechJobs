@@ -12,7 +12,7 @@ public class UsuarioRepository(IConfiguration configuration) : GenericRepository
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = @"SELECT U.Id, U.Perfil, U.Senha, COALESCE(E.Email, C.Email) AS Email, COALESCE(E.Nome, C.Nome) AS Nome FROM Usuario AS U
+        const string sqlCommand = @"SELECT U.Id, U.Perfil, U.Senha, U.EmailValidado, COALESCE(E.Email, C.Email) AS Email, COALESCE(E.Nome, C.Nome) AS Nome FROM Usuario AS U
                                     LEFT JOIN Empresa AS E
                                     ON E.IdUsuario = U.Id
                                     LEFT JOIN Candidato AS C
@@ -20,6 +20,20 @@ public class UsuarioRepository(IConfiguration configuration) : GenericRepository
                                     WHERE U.Login = @login";
 
         return conexao.QuerySingleOrDefault<CredenciaisUsuarioDTO>(sqlCommand, new { login });
+    }
+
+    public CredenciaisUsuarioDTO? ObterDadosUsuario(int idUsuario)
+    {
+        using var conexao = CriarConexao();
+
+        const string sqlCommand = @"SELECT U.Id, U.Perfil, U.Senha, U.EmailValidado, COALESCE(E.Email, C.Email) AS Email, COALESCE(E.Nome, C.Nome) AS Nome FROM Usuario AS U
+                                    LEFT JOIN Empresa AS E
+                                    ON E.IdUsuario = U.Id
+                                    LEFT JOIN Candidato AS C
+                                    ON C.IdUsuario = U.Id
+                                    WHERE U.Id = @idUsuario";
+
+        return conexao.QuerySingleOrDefault<CredenciaisUsuarioDTO>(sqlCommand, new { idUsuario });
     }
 
     public Usuario? ObterPorLoginEDocumento(string login, string documento)
