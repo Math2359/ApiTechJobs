@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using Amazon;
+using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using Amazon.SimpleEmail;
@@ -74,7 +75,7 @@ namespace Services.Utils
 
         public async Task SendEmailTemplate(string destinatario, string template, object templateData)
         {
-            var sesClient = new AmazonSimpleEmailServiceClient();
+            var sesClient = new AmazonSimpleEmailServiceClient(RegionEndpoint.SAEast1);
 
             var request = new SendTemplatedEmailRequest
             {
