@@ -22,7 +22,7 @@ public class VagaService(VagaRepository vagaRepository, CandidatoVagaRepository 
 
     public void Editar(int id, Vaga vaga)
     {
-        var vagaAtual = vagaRepository.ObterModelPorId(id);
+        var vagaAtual = vagaRepository.ObterPorId(id);
 
         if (vagaAtual == null)
             return;

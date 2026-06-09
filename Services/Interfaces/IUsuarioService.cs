@@ -12,4 +12,9 @@ public interface IUsuarioService
     Task EditarFotoPerfil(int idUsuario, IFormFile file);
     Task DeletarFotoPerfil(int idUsuario);
     Task<string?> GerarUrlAssinadaFotoPerfil(int idUsuario);
+    Task<string?> GerarUrlAssinadaFotoPerfilCandidato(int idCandidato);
+    IList<NotificacaoUsuario> ObterNotificacoes(int idUsuario);
+    int ObterQuantidadeNotificacoesNaoLidas(int idUsuario);
+    void MarcarNotificacaoComoLida(int id, int idUsuario);
+    void MarcarTodasNotificacoesComoLidas(int idUsuario);
 }

@@ -120,5 +120,85 @@ namespace Api.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
             }
         }
+
+        [AutorizarPerfis(EnumPerfil.Empresa)]
+        [HttpGet("foto-perfil/candidato/{idCandidato}")]
+        public async Task<IActionResult> ObterFotoPerfilCandidato(int idCandidato)
+        {
+            try
+            {
+                var url = await usuarioService.GerarUrlAssinadaFotoPerfilCandidato(idCandidato);
+
+                return Ok(url);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpGet("notificacao")]
+        public IActionResult ObterNotificacoes()
+        {
+            try
+            {
+                var notificacoes = usuarioService.ObterNotificacoes(User.ObterId());
+
+                return Ok(notificacoes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpGet("notificacao/nao-lidas")]
+        public IActionResult ObterQuantidadeNotificacoesNaoLidas()
+        {
+            try
+            {
+                var quantidade = usuarioService.ObterQuantidadeNotificacoesNaoLidas(User.ObterId());
+
+                return Ok(quantidade);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpPut("notificacao/{id}/lida")]
+        public IActionResult MarcarNotificacaoComoLida([FromRoute] int id)
+        {
+            try
+            {
+                usuarioService.MarcarNotificacaoComoLida(id, User.ObterId());
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpPut("notificacao/lidas")]
+        public IActionResult MarcarTodasNotificacoesComoLidas()
+        {
+            try
+            {
+                usuarioService.MarcarTodasNotificacoesComoLidas(User.ObterId());
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.GerarRespostaErro());
+            }
+        }
     }
 }

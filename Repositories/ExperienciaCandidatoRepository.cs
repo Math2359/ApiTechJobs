@@ -18,6 +18,18 @@ namespace Repositories
             OutputColumn = "IdCandidato";
         }
 
+        public IEnumerable<ExperienciaCandidatoDTO> ObterExperienciasPorIdCandidato(int idCandidato)
+        {
+            using var conexao = CriarConexao();
+
+            const string sqlCommand = @"SELECT *
+                                    FROM ExperienciaCandidato
+                                    WHERE IdCandidato = @idCandidato
+                                    ORDER BY TipoExperiencia, DataInicio DESC";
+
+            return conexao.Query<ExperienciaCandidatoDTO>(sqlCommand, new { idCandidato });
+        }
+
         public IEnumerable<ExperienciaCandidatoDTO> ObterExperienciasCandidato(int idUsuario)
         {
             using var conexao = CriarConexao();

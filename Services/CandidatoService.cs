@@ -14,7 +14,7 @@ using Utils;
 namespace Services;
 
 public class CandidatoService(CandidatoRepository candidatoRepository, InformacaoCandidatoRepository informacaoCandidatoRepository,
-    ExperienciaCandidatoRepository experienciaCandidatoRepository, CandidatoVagaRepository candidatoVagaRepository, IAwsService awsService) : ICandidatoService
+    ExperienciaCandidatoRepository experienciaCandidatoRepository, EmpresaRepository empresaRepository, VagaRepository vagaRepository, CandidatoVagaRepository candidatoVagaRepository, NotificacaoUsuarioRepository notificacaoUsuarioRepository, IAwsService awsService) : ICandidatoService
 {
     private readonly string _folder = "cv";
 
@@ -35,6 +35,20 @@ public class CandidatoService(CandidatoRepository candidatoRepository, Informaca
             Situacao = EnumSituacao.EmAnalise,
             DataAtualizacao = HorarioBrasilia.DataAtual,
            DataCadastro = HorarioBrasilia.DataAtual 
+        });
+
+        var vaga = vagaRepository.ObterPorId(aplicarVaga.IdVaga);
+        var empresa = empresaRepository.ObterPorId(vaga.IdEmpresa);
+
+        notificacaoUsuarioRepository.Adicionar(new NotificacaoUsuario
+        {
+            DataCadastro = HorarioBrasilia.DataAtual,
+            IdUsuario = empresa.IdUsuario,
+            IdAcao = vaga.Id,
+            Lida = false,
+            Titulo = "Nova aplicação!",
+            Tipo = EnumTipoNotificacao.Aplicacao,
+            Mensagem = $"Novo candidato para a vaga: {vaga.Nome}"
         });
     }
 

@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace Model.Response
 {
-    public class InformacoesEmpresaResponse(InformacaoEmpresa? informacaoEmpresa, int vagasDisponiveis, int candidatos)
+    public class InformacoesEmpresaResponse(Empresa empresa, InformacaoEmpresa? informacaoEmpresa, IList<VagaCandidatoResponse> vagas, int candidatos)
     {
+        public int Id { get; set; } = empresa.Id;
+        public string Nome { get; set; } = empresa.Nome;
         public string? Setor { get; set; } = informacaoEmpresa?.Setor;
         public string? Tecnologias { get; set; } = informacaoEmpresa?.Tecnologias;
         public string? Descricao { get; set; } = informacaoEmpresa?.Descricao;
         public string? LinkSite { get; set; } = informacaoEmpresa?.LinkSite;
-        public int VagasDisponiveis { get; set; } = vagasDisponiveis;
+        public int VagasDisponiveis { get; set; } = vagas.Count;
         public int Candidatos { get; set; } = candidatos;
+        public IList<VagaCandidatoResponse> Vagas { get; set; } = vagas;
     }
 }

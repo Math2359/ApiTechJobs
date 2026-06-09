@@ -13,6 +13,15 @@ namespace Repositories
 {
     public class InformacaoCandidatoRepository(IConfiguration configuration) : GenericRepository<InformacaoCandidato>(configuration)
     {
+        public InformacaoCandidato? ObterInformacoesPorIdCandidato(int idCandidato)
+        {
+            using var conexao = CriarConexao();
+
+            const string sqlCommand = "SELECT * FROM InformacaoCandidato WHERE IdCandidato = @idCandidato";
+
+            return conexao.QuerySingleOrDefault<InformacaoCandidato>(sqlCommand, new { idCandidato });
+        }
+
         public InformacaoCandidato? ObterInformacoesPorUsuario(int idUsuario)
         {
             using var conexao = CriarConexao();

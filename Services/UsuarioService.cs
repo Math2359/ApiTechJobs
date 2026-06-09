@@ -18,7 +18,8 @@ using Utils;
 namespace Services;
 
 public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuarioRespository,
-    ICandidatoService candidatoService, IEmpresaService empresaService, IAwsService awsService) : IUsuarioService
+    ICandidatoService candidatoService, IEmpresaService empresaService, CandidatoRepository candidatoRepository,
+    NotificacaoUsuarioRepository notificacaoUsuarioRepository, IAwsService awsService) : IUsuarioService
 {
     private readonly JwtSettings _jwt = jwt.Value;
     private readonly UsuarioRepository _usuarioRepository = usuarioRespository;
@@ -117,6 +118,28 @@ public class UsuarioService(IOptions<JwtSettings> jwt, UsuarioRepository usuario
 
         return await awsService.PreSignedURL(usuario.ChaveFotoPerfil);
     }
+
+    public async Task<string?> GerarUrlAssinadaFotoPerfilCandidato(int idCandidato)
+    {
+        var candidato = candidatoRepository.ObterPorId(idCandidato);
+
+        if (candidato == null)
+            return null;
+
+        return await GerarUrlAssinadaFotoPerfil(candidato.IdUsuario);
+    }
+
+    public IList<NotificacaoUsuario> ObterNotificacoes(int idUsuario) =>
+        notificacaoUsuarioRepository.ObterPorUsuario(idUsuario);
+
+    public int ObterQuantidadeNotificacoesNaoLidas(int idUsuario) =>
+        notificacaoUsuarioRepository.ObterQuantidadeNaoLidas(idUsuario);
+
+    public void MarcarNotificacaoComoLida(int id, int idUsuario) =>
+        notificacaoUsuarioRepository.MarcarComoLida(id, idUsuario);
+
+    public void MarcarTodasNotificacoesComoLidas(int idUsuario) =>
+        notificacaoUsuarioRepository.MarcarTodasComoLidas(idUsuario);
 
     private LogarUsuarioResponse GerarToken(CredenciaisUsuarioDTO usuario)
     {

@@ -14,9 +14,6 @@ namespace Api.Controllers
     [ApiController]
     public class VagaController(IVagaService vagaService, IEmpresaService empresaService) : ControllerBase
     {
-        private readonly IVagaService _vagaService = vagaService;
-        private readonly IEmpresaService _empresaService = empresaService;
-
         /// <summary>
         /// Adciona uma vaga
         /// </summary>
@@ -26,7 +23,7 @@ namespace Api.Controllers
         [HttpPost]
         public IActionResult AdicionarVaga([FromBody] AdicionarVagaRequest request)
         {
-            int id = _empresaService.AdicionarVaga(User.ObterId(), request);
+            int id = empresaService.AdicionarVaga(User.ObterId(), request);
 
             return Ok(id);
         }
@@ -39,21 +36,9 @@ namespace Api.Controllers
         [HttpGet("empresa")]
         public IActionResult ObterVagas()
         {
-            var vagas = _empresaService.ObterVagas(User.ObterId());
+            var vagas = empresaService.ObterVagas(User.ObterId());
 
             return Ok(vagas);
-        }
-        /// <summary>
-        /// Obtém as vagas de uma empresa
-        /// </summary>
-        /// <returns>Lista de vagas</returns>
-        [AutorizarPerfis(EnumPerfil.Empresa)]
-        [HttpGet("url-cv-aplicacao/{id}")]
-        public async Task<IActionResult> GerarUrlAssinada(int id)
-        {
-            var url = await _vagaService.GerarUrlAssinada(id);
-
-            return Ok(url);
         }
 
         /// <summary>
@@ -64,7 +49,7 @@ namespace Api.Controllers
         [HttpGet("todas")]
         public IActionResult ObterVagasDisponiveis([FromQuery] ObterTodasVagasRequest request)
         {
-            var vagas = _vagaService.ObterTodas(request);
+            var vagas = vagaService.ObterTodas(request);
 
             return Ok(vagas);
         }
@@ -77,7 +62,7 @@ namespace Api.Controllers
         [HttpGet("{id}")]
         public IActionResult ObterVaga([FromRoute] int id)
         {
-            var vaga = _vagaService.ObterVaga(id);
+            var vaga = vagaService.ObterVaga(id);
 
             return Ok(vaga);
         }
@@ -87,7 +72,7 @@ namespace Api.Controllers
         [HttpGet("empresa/{id}")]
         public IActionResult ObterVagaEmpresa([FromRoute] int id)
         {
-            var vaga = _vagaService.ObterVagaEmpresaPorId(id);
+            var vaga = vagaService.ObterVagaEmpresaPorId(id);
 
             return Ok(vaga);
         }
@@ -103,7 +88,7 @@ namespace Api.Controllers
         [AutorizarPerfis(EnumPerfil.Empresa)]
         public IActionResult EditarVaga([FromRoute] int id, [FromBody] Vaga vaga)
         {
-            _vagaService.Editar(id, vaga);
+            vagaService.Editar(id, vaga);
 
             return NoContent();
         }
@@ -118,7 +103,7 @@ namespace Api.Controllers
         [AutorizarPerfis(EnumPerfil.Empresa)]
         public IActionResult ExcluirVaga([FromRoute] int id)
         {
-            _vagaService.Excluir(id);
+            vagaService.Excluir(id);
             
             return NoContent();
         }

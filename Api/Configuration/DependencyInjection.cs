@@ -33,6 +33,7 @@ public static class DependencyInjection
         servicos.AddSingleton<ExperienciaCandidatoRepository>();
         servicos.AddSingleton<InformacaoCandidatoRepository>();
         servicos.AddSingleton<InformacaoEmpresaRepository>();
+        servicos.AddSingleton<NotificacaoUsuarioRepository>();
         #endregion
 
         // Services

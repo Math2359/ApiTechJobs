@@ -17,7 +17,9 @@ public interface IEmpresaService
     int AdicionarVaga(int idUsuario, AdicionarVagaRequest novaVaga);
     IList<VagaResponse> ObterVagas(int idUsuario);
     void RetornarResultado(int idAplicacao, EnumSituacao situacao);
+    Task<DadosAplicacaoCandidatoResponse?> ObterDadosAplicacaoCandidato(int idAplicacao);
     InformacoesEmpresaResponse ObterInformacoesPorUsuario(int idUsuario);
+    InformacoesEmpresaResponse? ObterInformacoesPorId(int idEmpresa);
     void AtualizarInformacoesEmpresa(int idusuario, AtualizarInformacoesEmpresaRequest request);
     Task<string?> GerarUrlAssinadaFotoPerfil(int idEmpresa);
 }

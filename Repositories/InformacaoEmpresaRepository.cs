@@ -25,6 +25,15 @@ namespace Repositories
             return conexao.QuerySingleOrDefault<InformacaoEmpresa>(sqlCommand, new { idUsuario });
         }
 
+        public InformacaoEmpresa? ObterInformacoesPorIdEmpresa(int idEmpresa)
+        {
+            using var conexao = CriarConexao();
+
+            const string sqlCommand = "SELECT * FROM InformacaoEmpresa WHERE IdEmpresa = @idEmpresa";
+
+            return conexao.QuerySingleOrDefault<InformacaoEmpresa>(sqlCommand, new { idEmpresa });
+        }
+
         public override void Editar(InformacaoEmpresa obj)
         {
             using var conexao = CriarConexao();

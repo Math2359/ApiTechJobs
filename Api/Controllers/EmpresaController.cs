@@ -16,13 +16,13 @@ namespace Api.Controllers
     [Route("empresa")]
     [ApiController]
     [ProducesErrorResponseType(typeof(ErroResponse))]
-    [AutorizarPerfis(EnumPerfil.Empresa)]
     public class EmpresaController(IEmpresaService empresaService) : ControllerBase
     {
         /// <summary>
         /// Obtém os dados da empresa logada
         /// </summary>
         /// <returns>Dados da empresa</returns>
+        [AutorizarPerfis(EnumPerfil.Empresa)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Empresa))]
         [HttpGet]
         public IActionResult ObterDados()
@@ -39,6 +39,7 @@ namespace Api.Controllers
             }
         }
 
+        [AutorizarPerfis(EnumPerfil.Empresa)]
         [HttpPost("aplicacao-vaga/{idAplicacao}/{situacao}")]
         public IActionResult RetornarResultado([FromRoute] int idAplicacao, [FromRoute] EnumSituacao situacao)
         {
@@ -47,6 +48,19 @@ namespace Api.Controllers
             return NoContent();
         }
 
+        [AutorizarPerfis(EnumPerfil.Empresa)]
+        [HttpGet("aplicacao-vaga/{idAplicacao}")]
+        public async Task<IActionResult> ObterDadosAplicacaoCandidato([FromRoute] int idAplicacao)
+        {
+            var aplicacao = await empresaService.ObterDadosAplicacaoCandidato(idAplicacao);
+
+            if (aplicacao == null)
+                return NotFound();
+
+            return Ok(aplicacao);
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa)]
         [HttpGet("informacoes")]
         public IActionResult ObterInformacoesPorUsuario()
         {
@@ -55,6 +69,19 @@ namespace Api.Controllers
             return Ok(informacoes);
         }
 
+        [AutorizarPerfis(EnumPerfil.Empresa, EnumPerfil.Candidato)]
+        [HttpGet("informacoes/{idEmpresa}")]
+        public IActionResult ObterInformacoesPorId([FromRoute] int idEmpresa)
+        {
+            var informacoes = empresaService.ObterInformacoesPorId(idEmpresa);
+
+            if (informacoes == null)
+                return NotFound();
+
+            return Ok(informacoes);
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa)]
         [HttpPut("informacoes")]
         public IActionResult AtualizarInformacoes([FromBody] AtualizarInformacoesEmpresaRequest request)
         {
