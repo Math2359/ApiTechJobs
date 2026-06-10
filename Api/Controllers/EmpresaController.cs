@@ -43,9 +43,32 @@ namespace Api.Controllers
         [HttpPost("aplicacao-vaga/{idAplicacao}/{situacao}")]
         public IActionResult RetornarResultado([FromRoute] int idAplicacao, [FromRoute] EnumSituacao situacao)
         {
-            empresaService.RetornarResultado(idAplicacao, situacao);
+            try
+            {
+                empresaService.RetornarResultado(idAplicacao, situacao);
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GerarRespostaErro());
+            }
+        }
+
+        [AutorizarPerfis(EnumPerfil.Empresa)]
+        [HttpPost("aplicacao-vaga/{idAplicacao}/entrevista")]
+        public IActionResult AgendarEntrevista([FromRoute] int idAplicacao, [FromBody] AgendarEntrevistaRequest request)
+        {
+            try
+            {
+                empresaService.AgendarEntrevista(idAplicacao, request);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GerarRespostaErro());
+            }
         }
 
         [AutorizarPerfis(EnumPerfil.Empresa)]

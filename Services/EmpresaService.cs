@@ -11,7 +11,7 @@ using Utils;
 
 namespace Services;
 
-public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, UsuarioRepository usuarioRepository, CandidatoRepository candidatoRepository, CandidatoVagaRepository candidatoVagaRepository, InformacaoEmpresaRepository informacaoEmpresaRepository, NotificacaoUsuarioRepository notificacaoUsuarioRepository, InformacaoCandidatoRepository informacaoCandidatoRepository, ExperienciaCandidatoRepository experienciaCandidatoRepository, IAwsService awsService) : IEmpresaService
+public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository vagaRepository, UsuarioRepository usuarioRepository, CandidatoRepository candidatoRepository, CandidatoVagaRepository candidatoVagaRepository, InformacaoEmpresaRepository informacaoEmpresaRepository, NotificacaoUsuarioRepository notificacaoUsuarioRepository, InformacaoCandidatoRepository informacaoCandidatoRepository, ExperienciaCandidatoRepository experienciaCandidatoRepository, AgendamentoEntrevistaRepository agendamentoEntrevistaRepository, IAwsService awsService) : IEmpresaService
 {
     public int Adicionar(Empresa empresa) => empresaRepository.Adicionar(empresa);
 
@@ -47,8 +47,13 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
 
     public void RetornarResultado(int idAplicacao, EnumSituacao situacao)
     {
-        var aplicacao = candidatoVagaRepository.ObterPorId(idAplicacao);
-        var candidato = candidatoRepository.ObterPorId(aplicacao.IdCandidato);
+        if (situacao == EnumSituacao.Entrevista)
+            throw new Exception("Utilize o endpoint de agendamento para marcar uma entrevista.");
+
+        var aplicacao = candidatoVagaRepository.ObterPorId(idAplicacao)
+            ?? throw new Exception("Aplicação não encontrada.");
+        var candidato = candidatoRepository.ObterPorId(aplicacao.IdCandidato)
+            ?? throw new Exception("Candidato não encontrado.");
 
         candidatoVagaRepository.Editar(new CandidatoVaga
         {
@@ -65,6 +70,57 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
             Lida = false,
             Mensagem = $"A empresa retornou o resultado da sua aplicação: {situacao.ObterDescricao()}",
             Titulo = "Resultado da aplicação!",
+            Tipo = EnumTipoNotificacao.RespostaVaga
+        });
+    }
+
+    public void AgendarEntrevista(int idAplicacao, AgendarEntrevistaRequest request)
+    {
+        if (request.Data == default)
+            throw new Exception("A data da entrevista deve ser informada.");
+
+        if (request.Hora < TimeSpan.Zero || request.Hora >= TimeSpan.FromDays(1))
+            throw new Exception("A hora da entrevista é inválida.");
+
+        if (string.IsNullOrWhiteSpace(request.Local))
+            throw new Exception("O local da entrevista deve ser informado.");
+
+        if (request.Local.Length > 300)
+            throw new Exception("O local da entrevista deve ter no máximo 300 caracteres.");
+
+        if (request.Observacao?.Length > 1000)
+            throw new Exception("A observação deve ter no máximo 1000 caracteres.");
+
+        var dataHoraEntrevista = request.Data.Date.Add(request.Hora);
+
+        if (dataHoraEntrevista <= HorarioBrasilia.DataAtual)
+            throw new Exception("A entrevista deve ser agendada para uma data e hora futuras.");
+
+        var aplicacao = candidatoVagaRepository.ObterPorId(idAplicacao)
+            ?? throw new Exception("Aplicação não encontrada.");
+        var candidato = candidatoRepository.ObterPorId(aplicacao.IdCandidato)
+            ?? throw new Exception("Candidato não encontrado.");
+
+        var agendamento = new AgendamentoEntrevista
+        {
+            IdAplicacao = idAplicacao,
+            Data = request.Data.Date,
+            Hora = request.Hora,
+            Local = request.Local,
+            Observacao = request.Observacao
+        };
+
+        if (!agendamentoEntrevistaRepository.Agendar(agendamento, HorarioBrasilia.DataAtual))
+            throw new Exception("Não foi possível agendar a entrevista.");
+
+        notificacaoUsuarioRepository.Adicionar(new NotificacaoUsuario
+        {
+            DataCadastro = HorarioBrasilia.DataAtual,
+            PropsAdicionais = aplicacao.IdVaga.ToString(),
+            IdUsuario = candidato.IdUsuario,
+            Lida = false,
+            Mensagem = $"Sua entrevista foi agendada para {agendamento.Data:dd/MM/yyyy} às {agendamento.Hora:hh\\:mm}, em {agendamento.Local}.",
+            Titulo = "Entrevista marcada!",
             Tipo = EnumTipoNotificacao.RespostaVaga
         });
     }
@@ -88,7 +144,8 @@ public class EmpresaService(EmpresaRepository empresaRepository, VagaRepository 
             Experiencias = experiencias,
             Situacao = aplicacao.Situacao,
             DataCadastroAplicacao = aplicacao.DataCadastro,
-            UrlCv = urlCv
+            UrlCv = urlCv,
+            AgendamentoEntrevista = agendamentoEntrevistaRepository.ObterPorIdAplicacao(idAplicacao)
         };
     }
 

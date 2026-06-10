@@ -41,16 +41,28 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
     {
         using var conexao = CriarConexao();
 
-        const string sqlCommand = @"SELECT V.*, E.Nome AS NomeEmpresa, CV.Situacao, CV.DataAtualizacao AS DataAtualizacaoAplicacao FROM Candidato AS C
+        const string sqlCommand = @"SELECT V.*, E.Nome AS NomeEmpresa, CV.Situacao, CV.DataAtualizacao AS DataAtualizacaoAplicacao,
+                                        AE.Id, AE.IdAplicacao, AE.Data, AE.Hora, AE.Local, AE.Observacao
+                                    FROM Candidato AS C
                                     LEFT JOIN CandidatoVaga AS CV
                                     ON CV.IdCandidato = C.Id
                                     LEFT JOIN Vaga AS V
                                     ON CV.IdVaga = V.Id
                                     LEFT JOIN Empresa AS E
                                     ON E.Id = V.IdEmpresa
+                                    LEFT JOIN AgendamentoEntrevista AS AE
+                                    ON AE.IdAplicacao = CV.Id
                                     WHERE C.IdUsuario = @idUsuario";
 
-        return [.. conexao.Query<AplicacaoCandidatoResponse>(sqlCommand, new { idUsuario })];
+        return [.. conexao.Query<AplicacaoCandidatoResponse, AgendamentoEntrevista, AplicacaoCandidatoResponse>(
+            sqlCommand,
+            (aplicacao, agendamento) =>
+            {
+                aplicacao.AgendamentoEntrevista = agendamento;
+                return aplicacao;
+            },
+            new { idUsuario },
+            splitOn: "Id")];
     }
 
     public AplicacaoCandidatoResponse? ObterVaga(int idVaga, int idUsuario)
@@ -60,7 +72,8 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
         const string sqlCommand = @"SELECT 
                                 V.*, 
                                 E.Nome AS NomeEmpresa,
-                                CV.Situacao, CV.DataAtualizacao AS DataAtualizacaoAplicacao
+                                CV.Situacao, CV.DataAtualizacao AS DataAtualizacaoAplicacao,
+                                AE.Id, AE.IdAplicacao, AE.Data, AE.Hora, AE.Local, AE.Observacao
                             FROM Vaga AS V
                             LEFT JOIN Empresa AS E
                                 ON E.Id = V.IdEmpresa
@@ -69,9 +82,19 @@ public class CandidatoVagaRepository(IConfiguration configuration) : GenericRepo
                             LEFT JOIN CandidatoVaga AS CV
                                 ON CV.IdVaga = V.Id
                                 AND CV.IdCandidato = C.Id
+                            LEFT JOIN AgendamentoEntrevista AS AE
+                                ON AE.IdAplicacao = CV.Id
                             WHERE V.Id = @idVaga";
 
-        return conexao.QuerySingleOrDefault<AplicacaoCandidatoResponse>(sqlCommand, new { idVaga, idUsuario });
+        return conexao.Query<AplicacaoCandidatoResponse, AgendamentoEntrevista, AplicacaoCandidatoResponse>(
+            sqlCommand,
+            (aplicacao, agendamento) =>
+            {
+                aplicacao.AgendamentoEntrevista = agendamento;
+                return aplicacao;
+            },
+            new { idVaga, idUsuario },
+            splitOn: "Id").SingleOrDefault();
     }
 
     public DadosVagasCandidatoDTO ObterDadosDashboard(int idUsuario)

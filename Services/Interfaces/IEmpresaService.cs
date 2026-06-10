@@ -17,6 +17,7 @@ public interface IEmpresaService
     int AdicionarVaga(int idUsuario, AdicionarVagaRequest novaVaga);
     IList<VagaResponse> ObterVagas(int idUsuario);
     void RetornarResultado(int idAplicacao, EnumSituacao situacao);
+    void AgendarEntrevista(int idAplicacao, AgendarEntrevistaRequest request);
     Task<DadosAplicacaoCandidatoResponse?> ObterDadosAplicacaoCandidato(int idAplicacao);
     InformacoesEmpresaResponse ObterInformacoesPorUsuario(int idUsuario);
     InformacoesEmpresaResponse? ObterInformacoesPorId(int idEmpresa);

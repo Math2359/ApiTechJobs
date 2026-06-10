@@ -15,4 +15,5 @@ public class DadosAplicacaoCandidatoResponse
     public EnumSituacao Situacao { get; set; }
     public DateTime DataCadastroAplicacao { get; set; }
     public string? UrlCv { get; set; }
+    public AgendamentoEntrevista? AgendamentoEntrevista { get; set; }
 }
